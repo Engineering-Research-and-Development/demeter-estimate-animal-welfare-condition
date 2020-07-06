@@ -1,12 +1,12 @@
 ![](https://portal.ogc.org/files/?artifact_id=92076)
 # Estimate animal welfare condition  
-___
+
 DEMETER project: machine learning module for animal welfare estimation  
 **INSERT AN INTRODUCTION**
 
 
 # Table of contents
-___
+
 1. [**Requirements**](#requirements)
 2. [**Setup**](#setup)
 3. [**Built with**](#built-with)
@@ -16,17 +16,17 @@ ___
 
 
 # Requirements
-___
+
 **TO DO**
 
 
 # Setup
-___
+
 **TO DO**
 
 
 # Built with
-___
+
 | Description                                     | Language | Version          |
 | :---------------------------------------------- | :------: | :--------------: |
 | [Java SE Development Kit 8][1]                  | Java     | 1.8.0_251        |
@@ -51,16 +51,16 @@ ___
 
 
 # Endpoints
-___
+
 **TO DO**
 
 
 # Examples
-___
+
 **TO DO**
 
 
 # Troubleshoot
-___
+
 **TO DO**
 
