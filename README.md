@@ -1,31 +1,22 @@
 ![](https://portal.ogc.org/files/?artifact_id=92076)
-# Estimate animal welfare condition  
+# Estimate animal welfare condition
 
 DEMETER project: machine learning module for animal welfare estimation  
 **INSERT AN INTRODUCTION**
 
+## Table of contents
+* [**Technologies**](#technologies)
+* [**Requirements**](#requirements)
+* [**Setup**](#setup)
+* [**Features**](#features)
+* [**Endpoints**](#endpoints)
+* [**Using**](#using)
+* [**Troubleshoot**](#troubleshoot)
+* [**Developers**](#developers)
+* [**Status**](#status)
+* [**License**](#license)
 
-# Table of contents
-
-1. [**Requirements**](#requirements)
-2. [**Setup**](#setup)
-3. [**Built with**](#built-with)
-4. [**Endpoints**](#endpoints)
-5. [**Examples**](#examples)
-6. [**Troubleshoot**](#troubleshoot)
-
-
-# Requirements
-
-**TO DO**
-
-
-# Setup
-
-**TO DO**
-
-
-# Built with
+## Technologies
 
 | Description                                     | Language | Version          |
 | :---------------------------------------------- | :------: | :--------------: |
@@ -49,18 +40,37 @@ DEMETER project: machine learning module for animal welfare estimation
 [8]: https://www.eclipse.org/downloads/ 
 [9]: http://www.pydev.org/ 
 
-
-# Endpoints
-
+## Requirements
 **TO DO**
 
-
-# Examples
-
+## Setup
 **TO DO**
 
-
-# Troubleshoot
-
+## Features
 **TO DO**
 
+List of features
+
+* Feature 1
+* Feature 2
+* Feature 3
+
+## Endpoints
+**TO DO**
+
+## Using
+**TO DO**
+
+## Troubleshoot
+**TO DO**
+
+## Developers
+
+* [Luigi di Corrado](https://github.com/luidicorra) 
+
+## Status
+Project is: _in progress_
+
+## License
+<!--- If you're not sure which open license to use see https://choosealicense.com/--->
+This project uses the following license: [<license_name>](<link>).
