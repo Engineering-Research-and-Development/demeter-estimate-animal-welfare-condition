@@ -1,5 +1,5 @@
 ![](https://portal.ogc.org/files/?artifact_id=92076)
-# Estimate animal welfare condition
+# Estimate animal welfare condition module
 
 DEMETER project: machine learning module for animal welfare estimation  
 **INSERT AN INTRODUCTION**
@@ -10,7 +10,7 @@ DEMETER project: machine learning module for animal welfare estimation
 * [**Setup**](#setup)
 * [**Features**](#features)
 * [**Endpoints**](#endpoints)
-* [**Using**](#using)
+* [**How to use**](#how-to-use)
 * [**Troubleshoot**](#troubleshoot)
 * [**Developers**](#developers)
 * [**Status**](#status)
@@ -47,18 +47,23 @@ DEMETER project: machine learning module for animal welfare estimation
 **TO DO**
 
 ## Features
-**TO DO**
 
-List of features
+* **Algorithm Training, Testing and Metrics calculation:** 
+Receives a dataset of _training features_ as input to perfom the training, test and metrics calculations of the models. 
+Return an object with the _training result_ that will show all the test records used after the training with the predictions made by the algorithm and the metrics.
 
-* Feature 1
-* Feature 2
-* Feature 3
+* **Predict health condition:** 
+Receive a dataset of _prediction features_ as input to perform predictions and return an object with the _prediction result_. 
 
 ## Endpoints
-**TO DO**
+_Insert some description about endpoints here_
 
-## Using
+| URL                            | Type     | Used for                                         | Input                                | Output                                 |
+| :----------------------------- | :------: | :----------------------------------------------- | :----------------------------------- | :------------------------------------- |
+| **/animalWelfare/Traininig**   | **POST** | Train the algorithm and save the test metrics    | Dataset with actual health condition | Object with predicted health condition |
+| **/animalWelfare/Predictions** | **POST** | Estimate the health condition                    | Dataset with data to be processed    | Object with predicted health condition |
+
+## How to use
 **TO DO**
 
 ## Troubleshoot
