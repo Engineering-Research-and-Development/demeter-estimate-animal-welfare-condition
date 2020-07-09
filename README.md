@@ -1,8 +1,12 @@
 ![](https://portal.ogc.org/files/?artifact_id=92076)
 # Estimate animal welfare condition module
 
-DEMETER project: machine learning module for animal welfare estimation  
-**INSERT AN INTRODUCTION**
+Machine learning module for animal welfare estimation using _**Random Forest**_ algorithm.
+The values to predict are a discrete class label such as _**Healthy**_ or _**Sick**_.
+During training, it is necessary to provide to the model any historical data that is relevant 
+to the problem domain and the true value we want the model learns to predict. 
+The model learns any relationships between the data and the values we want to predict. 
+The decision tree forms a structure, calculating the best questions to ask to make the most accurate estimates possible.
 
 ## Table of contents
 * [**Technologies**](#technologies)
@@ -41,7 +45,11 @@ DEMETER project: machine learning module for animal welfare estimation
 [9]: http://www.pydev.org/ 
 
 ## Requirements
-**TO DO**
+
+* Java 1.8
+* Python 3
+* Maven
+* Tomcat 7
 
 ## Setup
 **TO DO**
@@ -49,19 +57,18 @@ DEMETER project: machine learning module for animal welfare estimation
 ## Features
 
 * **Algorithm Training, Testing and Metrics calculation:** 
-Receives a dataset of _training features_ as input to perfom the training, test and metrics calculations of the models. 
+Receives a dataset of _training features_ as input to perfom the training, test and metrics calculations. 
 Return an object with the _training result_ that will show all the test records used after the training with the predictions made by the algorithm and the metrics.
 
 * **Predict health condition:** 
 Receive a dataset of _prediction features_ as input to perform predictions and return an object with the _prediction result_. 
 
 ## Endpoints
-_Insert some description about endpoints here_
 
-| URL                            | Type     | Used for                                         | Input                                | Output                                 |
-| :----------------------------- | :------: | :----------------------------------------------- | :----------------------------------- | :------------------------------------- |
-| **/animalWelfare/Traininig**   | **POST** | Train the algorithm and save the test metrics    | Dataset with actual health condition | Object with predicted health condition |
-| **/animalWelfare/Predictions** | **POST** | Estimate the health condition                    | Dataset with data to be processed    | Object with predicted health condition |
+| URL                            | Type     | Used for                                         | Input                                | Output                                                  |
+| :----------------------------- | :------: | :----------------------------------------------- | :----------------------------------- | :------------------------------------------------------ |
+| **/animalWelfare/Traininig**   | **POST** | Train the algorithm and calculate the metrics    | Dataset with actual health condition | Object with test predicted health condition and metrics |
+| **/animalWelfare/Predictions** | **POST** | Estimate the health condition                    | Dataset with data to be processed    | Object with predicted health condition                  |
 
 ## How to use
 **TO DO**
