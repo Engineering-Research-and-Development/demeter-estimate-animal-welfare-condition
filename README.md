@@ -30,7 +30,7 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 | [Apache Tomcat 7][4]                            |          | 7.0.104          |
 | [Scikit-learn API][5]                           | Python   | 0.23.1           |
 | [JPY API][6]                                    | Java     | 0.8              |
-| [RESTEasy API][7]                               | Java     | 4.5.5.Final      |
+| [RESTEasy API][7]                               | Java     | 3.12.1.Final     |
 | [Eclipse IDE for Enterprise Java Developers][8] | Java     | 2020-06 (4.16.0) |
 | [PyDev Python IDE for Eclipse][9]               | Python   | 7.6.0            |
 
