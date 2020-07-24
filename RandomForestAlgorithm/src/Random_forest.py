@@ -9,7 +9,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 
-# !!! SETTINGS FOR TRAINING SETUP AND MODEL SAVE
+# SETTINGS FOR TRAINING SETUP AND MODEL SAVE
 rs = 0  # Random State
 ModelFolderPath = './models'
 PrefixModel = 'Cow'
