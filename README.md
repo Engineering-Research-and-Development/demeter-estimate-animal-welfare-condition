@@ -22,17 +22,19 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 
 ## Technologies
 
-| Description                                     | Language | Version          |
-| :---------------------------------------------- | :------: | :--------------: |
-| [Java SE Development Kit 8][1]                  | Java     | 1.8.0_251        |
-| [Python 3][2]                                   | Python   | 3.8.3            |
-| [Apache Maven 3][3]                             |          | 3.6.3            |
-| [Apache Tomcat 7][4]                            |          | 7.0.104          |
-| [Scikit-learn API][5]                           | Python   | 0.23.1           |
-| [JPY API][6]                                    | Java     | 0.10             |
-| [RESTEasy API][7]                               | Java     | 3.12.1.Final     |
-| [Eclipse IDE for Enterprise Java Developers][8] | Java     | 2020-06 (4.16.0) |
-| [PyDev Python IDE for Eclipse][9]               | Python   | 7.6.0            |
+| Description                                      | Language | Version          |
+| :----------------------------------------------  | :------: | :--------------: |
+| [Java SE Development Kit 8][1]                   | Java     | 1.8.0_251        |
+| [Python 3][2]                                    | Python   | 3.8.3            |
+| [Apache Maven 3][3]                              |          | 3.6.3            |
+| [Apache Tomcat 7][4]                             |          | 7.0.104          |
+| [Scikit-learn API][5]                            | Python   | 0.23.1           |
+| [JPY API][6]                                     | Java     | 0.10.SNAPSHOT    |
+| [RESTEasy API][7]                                | Java     | 3.12.1.Final     |
+| [Spring Framework][8]                            | Java     | 4.3.3.RELEASE    |
+| [Json][9]                                        |          | 20200518         |
+| [Eclipse IDE for Enterprise Java Developers][10] | Java     | 2020-06 (4.16.0) |
+| [PyDev Python IDE for Eclipse][11]               | Python   | 7.6.0            |
 
 [1]: https://www.oracle.com/it/java/technologies/javase/javase-jdk8-downloads.html
 [2]: https://www.python.org/downloads/release/python-383/
@@ -41,8 +43,10 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 [5]: https://scikit-learn.org/stable/index.html 
 [6]: https://jpy.readthedocs.io/en/latest/intro.html 
 [7]: https://resteasy.github.io/ 
-[8]: https://www.eclipse.org/downloads/ 
-[9]: http://www.pydev.org/ 
+[8]: https://spring.io/projects/spring-framework
+[9]: http://www.JSON.org/
+[10]: https://www.eclipse.org/downloads/ 
+[11]: http://www.pydev.org/ 
 
 ## Requirements
 
