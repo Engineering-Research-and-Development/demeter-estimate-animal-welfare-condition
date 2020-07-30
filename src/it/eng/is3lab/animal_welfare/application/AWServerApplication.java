@@ -15,10 +15,8 @@ package it.eng.is3lab.animal_welfare.application;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
-
 import it.eng.is3lab.animal_welfare.service.AWServiceEndpoints;
 
 @ApplicationPath("/")
