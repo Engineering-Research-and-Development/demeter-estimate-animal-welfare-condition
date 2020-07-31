@@ -69,10 +69,10 @@ Receive a dataset of _prediction features_ as input to perform predictions and r
 
 ## Endpoints
 
-| URL                            | Type     | Used for                                         | Input                                | Output                                                  |
-| :----------------------------- | :------: | :----------------------------------------------- | :----------------------------------- | :------------------------------------------------------ |
-| **/animalWelfare/Traininig**   | **POST** | Train the algorithm and calculate the metrics    | Dataset with actual health condition | Object with test predicted health condition and metrics |
-| **/animalWelfare/Predictions** | **POST** | Estimate the health condition                    | Dataset with data to be processed    | Object with predicted health condition                  |
+| URL                            | Type     | Used for                                         | Input                                  | Output                                                  |
+| :----------------------------- | :------: | :----------------------------------------------- | :------------------------------------- | :------------------------------------------------------ |
+| **/animalWelfare/Traininig**   | **POST** | Train the algorithm and calculate the metrics    | Json data with actual health condition | Json with test predicted health condition and metrics   |
+| **/animalWelfare/Predictions** | **POST** | Estimate the health condition                    | Json with data to be processed         | Json with predicted health condition                    |
 
 ## How to use
 **TO DO**

@@ -3,7 +3,7 @@
  * 
  * Author: Luigi di Corrado
  * Mail: luigi.dicorrado@eng.it
- * Date: 28/07/2020
+ * Date: 30/07/2020
  * Company: Engineering Ingegneria Informatica S.p.A.
  * 
  * Define all the process to configure and use the python interpreter
