@@ -107,7 +107,7 @@ public class AWServiceEndpoints implements AWService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        // TO-DO: GESTIONE ERRORI LOG. Inviare un messaggio di errore in caso di stringa nulla
+        // TO-DO: GESTIONE ERRORI LOG. Inviare un messaggio di errore in caso di stringa vuota
 		return jsonDataOutput;
 	}
 
@@ -130,7 +130,7 @@ public class AWServiceEndpoints implements AWService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        // TO-DO: GESTIONE ERRORI LOG. Inviare un messaggio di errore in caso di stringa nulla
+        // TO-DO: GESTIONE ERRORI LOG. Inviare un messaggio di errore in caso di stringa vuota
 		return jsonDataOutput;
 	}
 
