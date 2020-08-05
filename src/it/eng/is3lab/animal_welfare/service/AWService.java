@@ -18,6 +18,7 @@ import javax.ws.rs.core.Context;
 public interface AWService {
 	
 	public String training(@Context HttpServletRequest request, InputStream requestBody) throws IOException;
+	
 	public String prediction(@Context HttpServletRequest request, InputStream requestBody) throws IOException;
 
 }
