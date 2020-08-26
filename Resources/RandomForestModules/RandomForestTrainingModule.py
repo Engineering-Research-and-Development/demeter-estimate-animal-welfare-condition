@@ -1,6 +1,7 @@
 import pandas as pd
 import datetime as dt
 import joblib
+import inspect
 import sys
 import os
 import json
@@ -9,37 +10,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
+from Logger import log
 
-class RandomForest:
-
-
-    # !!! INPUT DATASET
-    #dataframe = pd.read_csv('HealthPredictions_Training_DS.csv', sep=";")
-  
-  
-    # FUNCTIONS
-    # Log file message, create a directory and write a file with log messages
-    def LogMessage(self, Message, Result):
-        folder = './logs'
-        filename = 'Random_forest_log.log'
-        fullpath = folder + '/' + filename
-        try:
-            # Check if directory exists, or create it
-            os.makedirs(folder)
-        except FileExistsError:
-            # Directory already exists
-            pass
-        if os.path.exists(fullpath):
-            append_write = 'a'  # append
-        else:
-            append_write = 'w'  # new file
-
-        log = open(fullpath, append_write)
-        try:
-            log.write('[' + dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '] -- ' + Message + ' [' + Result + ']' + '\n')
-        finally:
-            log.close()
-          
+class RandomForest: 
+    # FUNCTIONS         
     # True Positive, False Positive, True Negative, False Negative, False Positive Rate, True Positive Rate calculation function
     def measure(self, y_actual, y_predict):
         TP = 0
@@ -63,27 +37,50 @@ class RandomForest:
         return(TP, FP, TN, FN, FPR, TPR)
   
     def execRFTraining(self, JsonData):
-        # SETTINGS FOR TRAINING SETUP AND MODEL SAVE
+        #!!! DA FIXARE !!!
+        myLog = log()
+        # LOGGING SETTINGS
+        print("\n FLAG 1 \n")
+        function = inspect.stack()[0][3] # Current function name
+        print("=============")
+        i = 0
+        while i < len(inspect.stack()):
+          a = 0
+          while a < len(inspect.stack()[i]):
+            myLog.writeMessage('{0}{1:4}'.format('['+str(i)+']','['+str(a)+']') + str(inspect.stack()[i][a]) + '\n',3)
+            a = a+1
+          i = i + 1
+        calledBy = "TEMP" #inspect.stack()[1][3] # Who invoked this function
+        #myLog = log()
+        #!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
+        # TRAINING SETTINGS
         rs = 0  # Random State
+        
+        # MODEL SETTINGS
         ModelFolderPath = './models'
         PrefixModel = 'Cow'
         LamenessModelName = PrefixModel + '_LamenessModel'
         KetosisModelName = PrefixModel + '_KetosisModel'
         MastitisModelName = PrefixModel + '_MastitisModel'
+
         # HEALTH PREDICTIONS TRAINING / TEST ALGORITHM
         try:
-            self.LogMessage('Health predictions training and test algorithm start ...', 'OK')
+            myLog.writeMessage('[Function: ' + function + '] Preparing to execute Random Forest training phase of Estimate Animal Welfare Condition.',3)
 
             # Check if directory exists, or create it
             try:
+                myLog.writeMessage('[Function: ' + function + '] Checking directory for saving models.',3)
                 os.makedirs(ModelFolderPath)
-                # self.LogMessage('Created directory : ' + os.path.realpath(ModelFolderPath), 'OK')
+                myLog.writeMessage('[Function: ' + function + '] Warning: Directory not found! ',2)
+                myLog.writeMessage('[Function: ' + function + '] Created directory: ' + os.path.realpath(ModelFolderPath), 1)
             except FileExistsError:
                 # Directory already exists
-                # self.LogMessage('Directory already exists : ' + os.path.realpath(ModelFolderPath), 'OK')
+                myLog.writeMessage('[Function: ' + function + '] Directory already exists: ' + os.path.realpath(ModelFolderPath), 3)
                 pass
 
             # Dataset preparation
+            myLog.writeMessage('[Function: ' + function + '] Loading dataset.',3)
             JsonObj = json.loads(JsonData)
             dataframe = pd.DataFrame(JsonObj)
             dataframe = dataframe.set_index('Index')
@@ -91,9 +88,10 @@ class RandomForest:
                     'Conduttivity 1', 'Conduttivity 2', 'Conduttivity 3', 'ActualMastitis']
             dataset = dataframe[cols]
 
-            self.LogMessage('Dataset loading complete', 'OK')
+            myLog.writeMessage('[Function: ' + function + '] Dataset successfully loaded!',1)
 
             # Transform non numeric columns, into 0 and 1
+            myLog.writeMessage('[Function: ' + function + '] Encoding labels.',3)
             le = LabelEncoder()
             le.fit(["Healthy", "Sick"])  # Healthy = 0 , Sick = 1
             le.transform(dataset["ActualLameness"])
@@ -109,10 +107,12 @@ class RandomForest:
             le2.transform(dataset["ActualMastitis"])
             dataset['ActualMastitis'] = le2.transform(dataset['ActualMastitis']).astype(int)
 
-            self.LogMessage('Encoding labels complete', 'OK')
+            myLog.writeMessage('[Function: ' + function + '] Encoding labels successfully completed!',1)
 
             # RANDOM FOREST CLASSIFICATION SETUP
-            # Defining the values: X will contains values and solutions, y will contain only solution column and i is the index column
+            # Defining the values: X will contains values and solutions, 
+            # y will contain only solution column and i is the index column
+            myLog.writeMessage('[Function: ' + function + '] Values definintion for classification.',3)
             Lameness_X = dataset.iloc[:, 0:1].values
             Lameness_y = dataset.iloc[:, 1].values
             Lameness_i = dataset.index.values
@@ -125,9 +125,10 @@ class RandomForest:
             Mastitis_y = dataset.iloc[:, 9].values
             Mastitis_i = dataset.index.values
 
-            self.LogMessage('Values definition for random forest classification setup, complete', 'OK')
+            myLog.writeMessage('[Function: ' + function + '] Values definintion for classification successfully completed!',1)
 
             # We split dataset into Training and test, and keep the index for each of them
+            myLog.writeMessage('[Function: ' + function + '] Defining training and test data',3)
             Lameness_X_train, Lameness_X_test, Lameness_y_train, Lameness_y_test, Lameness_i_train, Lameness_i_test = train_test_split(
               Lameness_X, Lameness_y, Lameness_i, test_size=0.20, random_state=rs)
 
@@ -137,7 +138,7 @@ class RandomForest:
             Mastitis_X_train, Mastitis_X_test, Mastitis_y_train, Mastitis_y_test, Mastitis_i_train, Mastitis_i_test = train_test_split(
               Mastitis_X, Mastitis_y, Mastitis_i, test_size=0.20, random_state=rs)
 
-            self.LogMessage('Defining training and test data complete', 'OK')
+            myLog.writeMessage('[Function: ' + function + '] Executing training and testing.',3)
 
             # Model construction for random forest classification
             LamenessClassifier = RandomForestClassifier(n_estimators=100, random_state=rs)
@@ -152,18 +153,20 @@ class RandomForest:
             MastitisClassifier.fit(Mastitis_X_train, Mastitis_y_train)
             Mastitis_y_pred = MastitisClassifier.predict(Mastitis_X_test)
 
-            self.LogMessage('Training and test complete', 'OK')
+            myLog.writeMessage('[Function: ' + function + '] Training and testing completed!',1)
 
             # Savign Models
+            myLog.writeMessage('[Function: ' + function + '] Saving models.',3)
             joblib.dump(LamenessClassifier, ModelFolderPath + '/' + LamenessModelName + '.pkl')
             joblib.dump(KetosisClassifier, ModelFolderPath + '/' + KetosisModelName + '.pkl')
             joblib.dump(MastitisClassifier, ModelFolderPath + '/' + MastitisModelName + '.pkl')
 
-            self.LogMessage('Models saved : ' + os.path.realpath(ModelFolderPath) + '/' + LamenessModelName + '.pkl, ' + 
+            myLog.writeMessage('[Function: ' + function + '] Models saved : ' + os.path.realpath(ModelFolderPath) + '/' + LamenessModelName + '.pkl, ' + 
                             os.path.realpath(ModelFolderPath) + '/' + KetosisModelName + '.pkl, ' + 
-                            os.path.realpath(ModelFolderPath) + '/' + MastitisModelName + '.pkl', 'OK')
+                            os.path.realpath(ModelFolderPath) + '/' + MastitisModelName + '.pkl', 1)
 
             # Getting Accuracy score
+            myLog.writeMessage('[Function: ' + function + '] Calculating Accuracy and Precision scores.',3)
             LamenessAccuracy = accuracy_score(Lameness_y_test, Lameness_y_pred) * 100
             KetosisAccuracy = accuracy_score(Ketosis_y_test, Ketosis_y_pred) * 100
             MastitisAccuracy = accuracy_score(Mastitis_y_test, Mastitis_y_pred) * 100
@@ -173,10 +176,11 @@ class RandomForest:
             KetosisPrecision = precision_score(Ketosis_y_test, Ketosis_y_pred, average='micro') * 100
             MastitisPrecision = precision_score(Mastitis_y_test, Mastitis_y_pred, average='micro') * 100
 
-            self.LogMessage('Accuracy score values set complete', 'OK')
+            myLog.writeMessage('[Function: ' + function + '] Accuracy and Precision scores successfully calculated!',1)
 
             # Creating a dataset with output test results
             # Setting the indexes picked for the test, we can choose any index from the three patologyes, they are all the same
+            myLog.writeMessage('[Function: ' + function + '] Preparing output dataset.',3)
             indices = Lameness_i_test
             df4 = pd.DataFrame(le.inverse_transform(Lameness_y_test))
             df4 = df4.set_index(indices)
@@ -207,9 +211,10 @@ class RandomForest:
             df10['Date'] = pd.to_datetime(df10['Date'], format='%Y-%m-%d').dt.strftime('%d/%m/%Y')
             df10 = df10.reset_index()
 
-            self.LogMessage('Output dataset construction complete', 'OK')
+            myLog.writeMessage('[Function: ' + function + '] Output dataset preparation competed!', 1)
 
             # Metrics calculation
+            myLog.writeMessage('[Function: ' + function + '] Executing metrics calculations.',3)
             Lameness_TP, Lameness_FP, Lameness_TN, Lameness_FN, Lameness_FPR, Lameness_TPR = self.measure(Lameness_y_test, Lameness_y_pred)
             Ketosis_TP, Ketosis_FP, Ketosis_TN, Ketosis_FN, Ketosis_FPR, Ketosis_TPR = self.measure(Ketosis_y_test, Ketosis_y_pred)
             Mastitis_TP, Mastitis_FP, Mastitis_TN, Mastitis_FN, Mastitis_FPR, Mastitis_TPR = self.measure(Mastitis_y_test, Mastitis_y_pred)
@@ -218,29 +223,34 @@ class RandomForest:
                     'MASTITIS_TRUE_POSITIVE_RATE': [Mastitis_TPR], 'MASTITIS_FALSE_POSITIVE_RATE': [Mastitis_FPR], 'MASTITIS_PRECISION': [MastitisPrecision], 'MASTITIS_ACCURACY': [MastitisAccuracy],
                     'KETOSIS_TRUE_POSITIVE_RATE': [Ketosis_TPR], 'KETOSIS_FALSE_POSITIVE_RATE': [Ketosis_FPR], 'KETOSIS_PRECISION': [KetosisPrecision], 'KETOSIS_ACCURACY': [KetosisAccuracy]}
 
-            self.LogMessage('Metrics calculation complete', 'OK')
+            myLog.writeMessage('[Function: ' + function + '] Metrics calculations completed!',1)
 
             # !!! OUTPUT  DATASET PREDICTIONS AND DATASET METRICS
+            myLog.writeMessage('[Function: ' + function + '] Defining output datasets.',3)
             dsPredictions = df10
             dsMetrics = pd.DataFrame(Mydict)
+            myLog.writeMessage('[Function: ' + function + '] Output dataset successfully defined!',1)
 
             # Convert dataset predictions to json using records orientation
+            myLog.writeMessage('[Function: ' + function + '] Converting output datasets to JSON.',3)
             jsonDataset = dsPredictions.to_json(orient='records')
             jsonMetrics = dsMetrics.to_json(orient='records')
-            self.LogMessage('Create JSON file from dataset test predictions','OK')  
+            myLog.writeMessage('[Function: ' + function + '] Conversion completed!',1)  
 
             # Decode the json data created to insert a custom root element
+            myLog.writeMessage('[Function: ' + function + '] Adding roots to JSON.',3)
             jsonDataset_decoded = json.loads(jsonDataset)
             jsonDataset_decoded = {'animalData': jsonDataset_decoded}
             jsonMetrics_decoded = json.loads(jsonMetrics)
             jsonMetrics_decoded = {'metrics': jsonMetrics_decoded}
+            myLog.writeMessage('[Function: ' + function + '] Roots successfully added!',1)
 
-            # Decode json that contains metrics element and update it with the prediction dataset json           
+            # Decode json that contains metrics element and update the prediction json
+            myLog.writeMessage('[Function: ' + function + '] Completing JSON output.',3)
             jsonDataset_decoded.update(jsonMetrics_decoded)
-            self.LogMessage('Updated JSON complete','OK')
 
             JsonResult = json.dumps(jsonDataset_decoded, indent=4, sort_keys=False)
-            self.LogMessage('Health predictions training and test algorithm complete successfully', 'OK')
+            myLog.writeMessage('[Function: ' + function + '] JSON output successfully completed!',1)
             # print(dsPredictions, dsMetrics)
             return JsonResult
         except:
@@ -248,4 +258,4 @@ class RandomForest:
             dsMetrics = None
             exc_type, exc_obj, exc_tb = sys.exc_info()
             errline = str(exc_tb.tb_lineno)
-            self.LogMessage("Unexpected error at line number " + errline + " : " + str(sys.exc_info()), 'ERROR')
+            myLog.writeMessage('[Function: ' + function + ' Invoked from: ' + calledBy + '] Unexpected error at line number ' + errline + ' : ' + str(sys.exc_info()), 0)

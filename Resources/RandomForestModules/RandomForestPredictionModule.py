@@ -1,5 +1,6 @@
 # TEMPORARY MODULE FOR TESTING
 import json
+from Logger import log
 
 class RandomForest:
   def execRFPrediction(self,a):

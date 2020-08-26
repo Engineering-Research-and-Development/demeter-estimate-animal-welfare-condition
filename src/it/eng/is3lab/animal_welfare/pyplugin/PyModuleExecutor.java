@@ -77,7 +77,8 @@ public class PyModuleExecutor {
         if (!PyLib.isPythonRunning()) {
             List<String> extraPaths = Arrays.asList(
                     "classpath:RandomForestTrainingModule.py",
-                    "classpath:RandomForestPredictionModule.py"
+                    "classpath:RandomForestPredictionModule.py",
+                    "classpath:Logger.py"
             );
             List<String> cleanedExtraPaths = new ArrayList<>(extraPaths.size());
 

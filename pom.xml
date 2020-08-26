@@ -61,6 +61,13 @@
           <exclude>**/*.java</exclude>
         </excludes>
       </resource>
+      <!-- Util Resources -->
+      <resource>
+        <directory>Resources/RandomForestModules/Utilities</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
       <!-- Jpy Config Resources -->
       <resource>
         <directory>Resources/jpy</directory>
