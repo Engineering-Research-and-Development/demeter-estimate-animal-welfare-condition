@@ -31,7 +31,7 @@
  *               KEY          | VALUE
  *               -------------|-----------------
  * Headers     : Content-Type | application/json
- * 				 Accept       | application/json
+ * 		 Accept       | application/json
  *    
  * Description : Read the json string content of the body inside the request and send it
  * 				 as input to the Python module executor.
@@ -53,7 +53,7 @@
  *               KEY          | VALUE
  *               -------------|-----------------
  * Headers     : Content-Type | application/json
- * 				 Accept       | application/json
+ * 		 Accept       | application/json
  * 
  * Description : Read the json string content of the body inside the request and send it
  * 				 as input to the Python module executor.
