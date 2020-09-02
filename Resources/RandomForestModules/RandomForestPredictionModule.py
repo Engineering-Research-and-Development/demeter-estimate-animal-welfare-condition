@@ -16,7 +16,7 @@ class RandomForest:
         
         # LOADING MODELS SETTINGS
         modelsNotExists = False
-        ModelFolderPath = './SavedModels'
+        ModelFolderPath = './models'
         PrefixModel = 'Cow'
         LamenessModelName = PrefixModel + '_LamenessModel'
         KetosisModelName = PrefixModel + '_KetosisModel'
@@ -90,22 +90,30 @@ class RandomForest:
                     dataframe = dataframe.reset_index()
                     myLog.writeMessage('Output preparation completed!',1,functionName)
                     
-                    # Json Output
-                    #  TO DO... 
-                    myLog.writeMessage('JSON output successfully processed!',1,functionName)
-                    myLog.writeMessage('Estimate Animal Welfare Condition training and test completed!',1,functionName)
-                    myLog.writeMessage('==============================================================',4,functionName)
+                    # Convert dataset predictions to json using records orientation
+                    myLog.writeMessage('Converting output dataset to JSON ...',3,functionName)
+                    jsonDataset = dataframe.to_json(orient='records')
+                    myLog.writeMessage('Conversion completed!',1,functionName)  
 
-                    ResultPred = dataframe
+                    # Decode the json data created to insert a custom root element
+                    myLog.writeMessage('Adding roots to JSON ...',3,functionName)
+                    jsonDataset_decoded = json.loads(jsonDataset)
+                    jsonDataset_decoded = {'animalData': jsonDataset_decoded}
+                    myLog.writeMessage('Roots successfully added!',1,functionName)
+
+                    # Process JSON output
+                    myLog.writeMessage('Processing JSON output ...',3,functionName)
+                    jsonResult = json.dumps(jsonDataset_decoded, indent=4, sort_keys=False)
+                    myLog.writeMessage('JSON output successfully processed!',1,functionName)
+                    myLog.writeMessage('Estimate Animal Welfare Condition predictions completed!',1,functionName)
+                    myLog.writeMessage('==============================================================',4,functionName)
+                    return jsonResult
                 else :
                     if len(existingfiles) < 1 :
                         myLog.writeMessage('The folder is empty!',2,functionName)
-                        ResultPred = pd.DataFrame(0,index=range(1),columns=range(1))
                     else :
                         myLog.writeMessage('Model name not found!',2,functionName)
-                        myLog.writeMessage('Found '+str(len(existingfiles))+' models files:'+ str(filesNames),2,functionName)
-                        ResultPred = pd.DataFrame(0,index=range(1),columns=range(1))          
+                        myLog.writeMessage('Found '+str(len(existingfiles))+' models files:'+ str(filesNames),2,functionName)         
             except:
                 myLog.writeMessage('Warning an exception occured!', 2,functionName)
                 raise
-print(ResultPred)
