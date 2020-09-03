@@ -26,7 +26,21 @@ class RandomForest:
         # Estimate Animal Welfare Condition - Prediction
         with myLog.error_debug():
             try:
-
+                
+                # Check if models folder exists
+                myLog.writeMessage('Checking models folder ...',3,functionName)
+                if (os.path.exists(ModelFolderPath)):
+                    pass
+                else :
+                    myLog.writeMessage('Warning! Folder '+ModelFolderPath+' not found!',2,functionName)
+                    myLog.writeMessage('Sending error message ...',3,functionName)
+                    errorData = {"Status": "Error",
+                                 "Type" : "Models directory not found",
+                                 "Description": "The models directory is missing. Please execute the training first."}
+                    jsonResult = json.dumps(errorData, indent=4, sort_keys=False)
+                    myLog.writeMessage('Error sent!',1,functionName)
+                    return jsonResult
+                
                 # Check if models file exists
                 myLog.writeMessage('Checking saved models files ...',3,functionName)
                 if (os.path.exists(ModelFolderPath + '/' + LamenessModelName + '.pkl') and
@@ -111,6 +125,13 @@ class RandomForest:
                 else :
                     if len(existingfiles) < 1 :
                         myLog.writeMessage('The folder is empty!',2,functionName)
+                        myLog.writeMessage('Sending error message ...',3,functionName)
+                        errorData = {"Status": "Error",
+                                     "Type" : "Models not found",
+                                     "Description": "There are no models saved. Please execute the training first."}
+                        jsonResult = json.dumps(errorData, indent=4, sort_keys=False)
+                        myLog.writeMessage('Error sent!',1,functionName)
+                        return jsonResult
                     else :
                         myLog.writeMessage('Model name not found!',2,functionName)
                         myLog.writeMessage('Found '+str(len(existingfiles))+' models files:'+ str(filesNames),2,functionName)         
