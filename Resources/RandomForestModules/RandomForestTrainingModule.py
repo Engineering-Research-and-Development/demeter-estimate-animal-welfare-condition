@@ -1,3 +1,55 @@
+"""
+Estimate Animal Condition Module - Random Forest Training/Test
+
+Author: Luigi di Corrado
+Mail: luigi.dicorrado@eng.it
+Date: 04/09/2020
+Company: Engineering Ingegneria Informatica S.p.A.
+
+Introduction : This module is used to perform the training of the Random Forest algorithm,
+               and create the models that will be used on prediction process to 
+               estimate the health of the animals.
+
+
+Function     : measure
+
+Description  : Execute the calculation of the following metrics data
+               TP   - True Positive
+               FP   - False Positive
+               TN   - True Negative
+               FN   - False Negative
+               TPR  - True Positive Rate
+               FPR  - False Positive Rate
+               
+Parameters   : dataframe  y_actual      contains the real solution data provided by the user
+               dataframe  y_predict     contains the test prediction data provived by the training phase
+               
+Return       : float TP
+               float FP
+               float TN
+               float FN
+               float TPR
+               float FPR
+
+
+
+Function     : execRFTraining
+
+Description  : Converts the JSON input into a dataframe object, then process the data to fit the relative
+               hillness and start the training phase for Random Forest algorithm.
+               The data is splitted using 80% of the rows for Training and 20% for Testing.
+               The random state "rs" argument is used to provide randomic rows while splitting the data.
+               Once the training is complete a test prediction is executed on the dedicated rows and the
+               models are saved into the configured folder.
+               The metrics are calculated using accuracy_score, precision_score and measure functions.
+               All the tested data and metrics are returned as output using JSON.
+               
+Parameters   : str   JsonData     - String that contains the JSON data to be processed
+               
+Return       : str   jsonResult   - String that contains all the JSON data to output
+
+"""
+
 import pandas as pd
 import datetime as dt
 import joblib

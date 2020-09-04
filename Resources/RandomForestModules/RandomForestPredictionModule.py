@@ -1,12 +1,12 @@
 import pandas as pd
 import numpy as np
 import joblib
+import json
 import sys
 import os
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
-from util.logger import log
-import json
+from Logger import log
 
 class RandomForest:
     def execRFPrediction(self, JsonData):
