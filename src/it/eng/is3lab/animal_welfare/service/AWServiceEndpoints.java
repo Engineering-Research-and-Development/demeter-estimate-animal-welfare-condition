@@ -92,21 +92,30 @@ public class AWServiceEndpoints implements AWService {
     @Path("/Training")
     @Formatted
 	public String training(@Context HttpServletRequest request, InputStream requestBody) throws IOException {
-		PyModuleExecutor pyExe = new PyModuleExecutor();
-		String jsonDataOutput = "";
-		BufferedReader reader = new BufferedReader(new InputStreamReader(requestBody));
+    	String jsonDataOutput = "";
+    	String line;
+    	PyModuleExecutor pyExe = new PyModuleExecutor();
+    	InputStreamReader inputStream = new InputStreamReader(requestBody);
+		BufferedReader reader = new BufferedReader(inputStream);
         StringBuilder jsonDataInput = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-        	jsonDataInput.append(line);
-        }
-        System.out.println(jsonDataInput.toString());
-        reader.close();   
-        try {			
+    	try {	
+	        while ((line = reader.readLine()) != null) {
+	        	jsonDataInput.append(line);
+	        }	
         	jsonDataOutput = pyExe.doTraining(jsonDataInput.toString()); 
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
+    	finally {
+    		if (reader != null) {
+    			try {
+    				reader.close();
+    			}
+    			catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    	}
         // TO-DO: GESTIONE ERRORI LOG. Inviare un messaggio di errore in caso di stringa vuota
 		return jsonDataOutput;
 	}
@@ -115,21 +124,30 @@ public class AWServiceEndpoints implements AWService {
     @Path("/Predictions")
     @Formatted
 	public String prediction(@Context HttpServletRequest request, InputStream requestBody) throws IOException {
-		PyModuleExecutor pyExe = new PyModuleExecutor();
-		String jsonDataOutput = "";
-		BufferedReader reader = new BufferedReader(new InputStreamReader(requestBody));
+    	String jsonDataOutput = "";
+    	String line;
+    	PyModuleExecutor pyExe = new PyModuleExecutor();
+    	InputStreamReader inputStream = new InputStreamReader(requestBody);
+		BufferedReader reader = new BufferedReader(inputStream);
         StringBuilder jsonDataInput = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-        	jsonDataInput.append(line);
-        }
-        System.out.println(jsonDataInput.toString());
-        reader.close();   
-        try {			
+    	try {	
+	        while ((line = reader.readLine()) != null) {
+	        	jsonDataInput.append(line);
+	        }	
         	jsonDataOutput = pyExe.doPrediction(jsonDataInput.toString()); 
-		} catch (Exception e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
+    	finally {
+    		if (reader != null) {
+    			try {
+    				reader.close();
+    			}
+    			catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    	}
         // TO-DO: GESTIONE ERRORI LOG. Inviare un messaggio di errore in caso di stringa vuota
 		return jsonDataOutput;
 	}
