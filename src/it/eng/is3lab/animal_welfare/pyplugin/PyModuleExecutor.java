@@ -76,8 +76,7 @@ public class PyModuleExecutor {
         });
         if (!PyLib.isPythonRunning()) {
             List<String> extraPaths = Arrays.asList(
-                    "classpath:RandomForestTrainingModule.py",
-                    "classpath:RandomForestPredictionModule.py",
+                    "classpath:RandomForestModule.py",
                     "classpath:Logger.py"
             );
             List<String> cleanedExtraPaths = new ArrayList<>(extraPaths.size());
@@ -111,7 +110,7 @@ public class PyModuleExecutor {
 		try {
 			initInterpreter();
 			// Proxify the call to a python class.
-	        PyModule rfModule = PyModule.importModule("RandomForestTrainingModule");
+	        PyModule rfModule = PyModule.importModule("RandomForestModule");
 	        PyObject rfObject = rfModule.call("RandomForest");
 	        RFModulePlugin rfPlugIn = rfObject.createProxy(RFModulePlugin.class);
 	        // Execute the python function.
@@ -128,7 +127,7 @@ public class PyModuleExecutor {
 		try {
 			initInterpreter();
 			// Proxify the call to a python class.
-	        PyModule rfModule = PyModule.importModule("RandomForestPredictionModule");
+	        PyModule rfModule = PyModule.importModule("RandomForestModule");
 	        PyObject rfObject = rfModule.call("RandomForest");
 	        RFModulePlugin rfPlugIn = rfObject.createProxy(RFModulePlugin.class);
 	        // Execute the python function.
