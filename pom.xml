@@ -49,6 +49,17 @@
         	<artifactId>json</artifactId>
         	<version>20200518</version>
         </dependency>
+        <!--  Set up log4j -->
+        <dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-api</artifactId>
+    		<version>2.13.3</version>
+  		</dependency>
+  		<dependency>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-core</artifactId>
+    		<version>2.13.3</version>
+ 		</dependency>
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -71,6 +82,13 @@
       <!-- Jpy Config Resources -->
       <resource>
         <directory>Resources/jpy</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+      <!-- log4j Config Resources -->
+      <resource>
+        <directory>Resources/log4j</directory>
         <excludes>
           <exclude>**/*.java</exclude>
         </excludes>

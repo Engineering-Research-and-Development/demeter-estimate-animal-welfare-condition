@@ -60,21 +60,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.jpy.PyLib;
 import org.jpy.PyModule;
 import org.jpy.PyObject;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.ResourceUtils;
 
+//import it.eng.is3lab.animal_welfare.service.AWServiceEndpoints;
+
 public class PyModuleExecutor {
-	
+	private static final Logger log = LogManager.getLogger(PyModuleExecutor.class);
+
 	private static void initInterpreter() throws Exception {
+		log.debug("Initialize Python Interpreter");
+		log.debug("Loading jpy configuration");
         Properties properties = new Properties();
         properties.load(new FileInputStream(ResourceUtils.getFile("classpath:jpyconfig.properties")));
         properties.forEach((k, v) -> {
+        	log.debug("Setting: "+(String) k+" Value: "+(String) v);
         	System.setProperty((String) k, (String) v);
         });
+        log.debug("Jpy Configuration completed!");
         if (!PyLib.isPythonRunning()) {
+        	log.debug("Preparing to configure Python modules path");
             List<String> extraPaths = Arrays.asList(
                     "classpath:RandomForestModule.py",
                     "classpath:Logger.py"
@@ -82,13 +94,16 @@ public class PyModuleExecutor {
             List<String> cleanedExtraPaths = new ArrayList<>(extraPaths.size());
 
             Path tempDirectory = Files.createTempDirectory("lib-");
+            // This Hook is not working. Need another solution
             Runtime.getRuntime().addShutdownHook(new Thread(() -> FileSystemUtils.deleteRecursively(((java.nio.file.Path) tempDirectory).toFile())));
             cleanedExtraPaths.add(tempDirectory.toString());
+            log.debug("Created temporary directory: "+tempDirectory.toString());
 
             extraPaths.forEach(lib -> {
                 if (lib.startsWith("classpath:")) {
                     try {
                         String finalLib = lib.replace("classpath:", "");
+                        log.debug("Copying python module: "+finalLib);
                         java.nio.file.Path target = Paths.get(tempDirectory.toString(), finalLib);
                         try (InputStream stream = PyModuleExecutor.class.getClassLoader().getResourceAsStream(finalLib)) {
                             Files.copy(stream, target, StandardCopyOption.REPLACE_EXISTING);
@@ -97,9 +112,11 @@ public class PyModuleExecutor {
                         e.printStackTrace();
                     }
                 } else {
+                	log.debug("Loading python module: "+lib);
                     cleanedExtraPaths.add(lib);
                 }
             });
+            log.debug("Initialization completed!");
 
             PyLib.startPython(cleanedExtraPaths.toArray(new String[]{}));
         }

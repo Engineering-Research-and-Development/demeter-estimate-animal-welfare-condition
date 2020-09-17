@@ -14,11 +14,12 @@ import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 
 public interface AWService {
 	
-	public String training(@Context HttpServletRequest request, InputStream requestBody) throws IOException;
+	public Response training(@Context HttpServletRequest request, InputStream requestBody) throws IOException;
 	
-	public String prediction(@Context HttpServletRequest request, InputStream requestBody) throws IOException;
+	public Response prediction(@Context HttpServletRequest request, InputStream requestBody) throws IOException;
 
 }

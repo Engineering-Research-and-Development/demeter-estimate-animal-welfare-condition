@@ -152,7 +152,7 @@ class log:
     def writeMessage(self, message, statusCode, functionName):
         status = self.__getStatus(statusCode)
         folder = './logs'
-        filename = 'Random_forest_log.log'
+        filename = 'Random_forest.log'
         fullpath = folder + '/' + filename
         try:
             # Check if directory exists, or create it
