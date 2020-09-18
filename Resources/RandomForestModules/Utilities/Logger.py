@@ -40,7 +40,7 @@ Function     : writeMessage
 
 Description  : Write the given message and other infos into a log file
 
-               Default filename is: Random_forest_log.log
+               Default filename is: animal_welfare.log
                Default folder path: ./logs
                
                The message structure is composed by:
@@ -161,7 +161,7 @@ class log:
             messageLevel = self.__getStatusLevel(statusLevel)
         currentLoggerLevel = self.__getStatusLevel(self.loggerLevel)
         folder = './logs'
-        filename = 'Random_forest.log'
+        filename = 'animal_welfare.log'
         fullpath = folder + '/' + filename
         try:
             # Check if directory exists, or create it
