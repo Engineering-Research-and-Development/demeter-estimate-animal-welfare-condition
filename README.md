@@ -33,8 +33,9 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 | [RESTEasy API][7]                                | Java     | 3.12.1.Final     |
 | [Spring Framework][8]                            | Java     | 4.3.3.RELEASE    |
 | [Json][9]                                        |          | 20200518         |
-| [Eclipse IDE for Enterprise Java Developers][10] | Java     | 2020-06 (4.16.0) |
-| [PyDev Python IDE for Eclipse][11]               | Python   | 7.6.0            |
+| [Log4j][10]                                      |          | 2.13.3           |
+| [Eclipse IDE for Enterprise Java Developers][11] | Java     | 2020-06 (4.16.0) |
+| [PyDev Python IDE for Eclipse][12]               | Python   | 7.6.0            |
 
 [1]: https://www.oracle.com/it/java/technologies/javase/javase-jdk8-downloads.html
 [2]: https://www.python.org/downloads/release/python-383/
@@ -45,8 +46,9 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 [7]: https://resteasy.github.io/ 
 [8]: https://spring.io/projects/spring-framework
 [9]: http://www.JSON.org/
-[10]: https://www.eclipse.org/downloads/ 
-[11]: http://www.pydev.org/ 
+[10]: https://logging.apache.org/log4j/2.x/
+[11]: https://www.eclipse.org/downloads/ 
+[12]: http://www.pydev.org/ 
 
 ## Requirements
 

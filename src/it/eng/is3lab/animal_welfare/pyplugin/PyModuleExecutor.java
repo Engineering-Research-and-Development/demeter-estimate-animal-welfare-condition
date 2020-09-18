@@ -3,7 +3,7 @@
  * 
  * Author: Luigi di Corrado
  * Mail: luigi.dicorrado@eng.it
- * Date: 30/07/2020
+ * Date: 18/09/2020
  * Company: Engineering Ingegneria Informatica S.p.A.
  * 
  * Define all the process to configure and use the python interpreter
@@ -27,25 +27,20 @@
  * 
  * 
  * 
- * Method      : doTraining
+ * Method      : executeFunction
  * 
- * Description : Sends the data inside the jsonData string to the training function 
- * 				 of the RandomForest class defined inside the RandomForestTrainingModule
+ * Description : Sends the jsonData string to the training or prediction function 
+ * 				 of the RandomForest class defined inside the RandomForestModule.
+ * 				 The value of "operation" var is used to choose which function execute:
+ * 					- "Training" - Execute training function
+ *               	- "Prediction" - Execute prediction function
+ * 				 If the output data received from python is not empty, 
+ *               then return the output data, else build a JsonObject containing an error.
  * 
- * Parameters  : String with json data input
+ * Parameters  : String jsonData    - Contains the json string with input data
+ * 				 String operation   - Used to choose which function execute
  * 
- * Return      : String with json data output
- * 
- * 
- * 
- * Method      : doPrediction
- * 
- * Description : Sends the data inside the jsonData string to the prediction function 
- * 				 of the RandomForest class defined inside the RandomForestPredictionModule
- * 
- * Parameters  : String with json data input
- * 
- * Return      : String with json data result
+ * Return      : String jsonDataResult
  */
 
 package it.eng.is3lab.animal_welfare.pyplugin;
@@ -67,6 +62,7 @@ import org.apache.logging.log4j.Logger;
 import org.jpy.PyLib;
 import org.jpy.PyModule;
 import org.jpy.PyObject;
+import org.json.JSONObject;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.ResourceUtils;
 
@@ -109,6 +105,7 @@ public class PyModuleExecutor {
                             Files.copy(stream, target, StandardCopyOption.REPLACE_EXISTING);
                         }
                     } catch (Exception e) {
+                    	log.error("An exception occured!",e);
                         e.printStackTrace();
                     }
                 } else {
@@ -116,43 +113,52 @@ public class PyModuleExecutor {
                     cleanedExtraPaths.add(lib);
                 }
             });
-            log.debug("Initialization completed!");
-
+            log.debug("Python interpreter configured!");
             PyLib.startPython(cleanedExtraPaths.toArray(new String[]{}));
         }
 	}
 	
-	public String doTraining(String jsonData) {
+	public String executeFunction(String jsonData, String operation) {
 		String jsonDataResult = "";
 		try {
 			initInterpreter();
+			log.debug("Importing random forest module into interpreter.");
 			// Proxify the call to a python class.
 	        PyModule rfModule = PyModule.importModule("RandomForestModule");
+	        log.debug("Calling the random forest module class.");
 	        PyObject rfObject = rfModule.call("RandomForest");
 	        RFModulePlugin rfPlugIn = rfObject.createProxy(RFModulePlugin.class);
 	        // Execute the python function.
-	        jsonDataResult = rfPlugIn.execRFTraining(jsonData);
-	        PyLib.stopPython(); 
+	        switch(operation) 
+	        { 
+	            case "Training": 
+	            	log.debug("TRAINING: Executing training function.");
+	            	jsonDataResult = rfPlugIn.execRFTraining(jsonData);
+	                break; 
+	            case "Prediction": 
+	            	log.debug("PREDICTION: Executing prediction function.");
+	            	jsonDataResult = rfPlugIn.execRFPrediction(jsonData);
+	            	break;
+	        }
 		} catch (Exception e) {
+			log.error("An exception occured!",e);
 			e.printStackTrace();
+		} finally {
+			log.debug("Stopping python interpreter.");
+	        PyLib.stopPython();
+	        
+			if (jsonDataResult == "") {
+        		log.error("Output data is empty! An error occured while executing python module."
+        				+ "Check the Random forest log for more info.");
+        		JSONObject err = new JSONObject();
+        		err.put("Status", "Error");
+        		err.put("Type", "Random forest module error");
+        		err.put("Description", "An error occured while processing the data.");
+        		jsonDataResult = err.toString();
+        		return jsonDataResult;
+        	}
 		}
-		return jsonDataResult;
-	}
-	
-	public String doPrediction(String jsonData) {
-		String jsonDataResult = "";
-		try {
-			initInterpreter();
-			// Proxify the call to a python class.
-	        PyModule rfModule = PyModule.importModule("RandomForestModule");
-	        PyObject rfObject = rfModule.call("RandomForest");
-	        RFModulePlugin rfPlugIn = rfObject.createProxy(RFModulePlugin.class);
-	        // Execute the python function.
-	        jsonDataResult = rfPlugIn.execRFPrediction(jsonData);
-	        PyLib.stopPython(); 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		log.debug("Sending output data.");
 		return jsonDataResult;
 	}
 

@@ -3,7 +3,7 @@
  * 
  * Author: Luigi di Corrado
  * Mail: luigi.dicorrado@eng.it
- * Date: 31/07/2020
+ * Date: 18/09/2020
  * Company: Engineering Ingegneria Informatica S.p.A.
  * 
  * Implements the Animal Welfare Service interface and define the 
@@ -72,8 +72,6 @@
  * 				 The operation string is used to select the task to perform:
  *               	- "Training" - Send data to training method
  *               	- "Prediction" - Send data to prediction method
- * 				 If the output data received from python is not empty, then return the output to the 
- * 				 endpoint, else will send back a json string containing an error message.
  * 
  * Parameters  : InputStream requestBody
  * 				 String 	 operation
@@ -101,7 +99,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
-import org.json.JSONObject;
 
 import it.eng.is3lab.animal_welfare.pyplugin.PyModuleExecutor;
 
@@ -142,7 +139,7 @@ public class AWServiceEndpoints implements AWService {
 	}
     
     private String initDataAndSend(InputStream requestBody, String operation) {
-    	log.debug("Initializing endpoint");
+    	log.debug("Initializing input data.");
     	String jsonDataOutput = "";
     	String line;
     	PyModuleExecutor pyExe = new PyModuleExecutor();
@@ -151,38 +148,19 @@ public class AWServiceEndpoints implements AWService {
         StringBuilder jsonDataInput = new StringBuilder();
         log.debug("Initialization completed!");
     	try {
-    		log.debug("Reading request body");
+    		log.debug("Reading request body.");
 	        while ((line = reader.readLine()) != null) {
 	        	jsonDataInput.append(line);
 	        }
-	        switch(operation) 
-	        { 
-	            case "Training": 
-	            	log.debug("TRAINING: Sending data to python executor class");
-	            	jsonDataOutput = pyExe.doTraining(jsonDataInput.toString());
-	                break; 
-	            case "Prediction": 
-	            	log.debug("PREDICTION: Sending data to python executor class");
-	            	jsonDataOutput = pyExe.doPrediction(jsonDataInput.toString());
-	            	break;
-	        }
-	        if (jsonDataOutput == "") {
-        		log.error("Output data is empty! An error occured while executing python module");
-        		JSONObject err = new JSONObject();
-        		err.put("Status", "Error");
-        		err.put("Type", "Random forest module error");
-        		err.put("Description", "An error occured while processing the data.");
-        		jsonDataOutput = err.toString();
-        		return jsonDataOutput;
-        	}
-	        log.debug("Received data output");
+	        log.debug("Sending data to python executor class.");
+        	jsonDataOutput = pyExe.executeFunction(jsonDataInput.toString(),operation);
 		} catch (IOException e) {
 			log.error("An exception occured!",e);
 			e.printStackTrace();
 		} finally {
     		if (reader != null) {
     			try {
-    				log.debug("Closing the reader");
+    				log.debug("Closing the reader.");
     				reader.close();
     			}
     			catch (IOException e) {

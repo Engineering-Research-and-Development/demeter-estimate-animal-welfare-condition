@@ -3,32 +3,36 @@ Custom logger module
 
 Author: Luigi di Corrado
 Mail: luigi.dicorrado@eng.it
-Date: 28/08/2020
+Date: 18/09/2020
 Company: Engineering Ingegneria Informatica S.p.A.
 
 Introduction : This logger is used to track the execution of Random Forest modules, 
                writing message that are labeled with some defined status tags like "ERROR" or "INFO" 
                followed by the function name that requested to write the message.
                Those messages are saved using append mode into a file that will be stored to the defined folder.
+               It's possible to set a different logger level by setting the "loggerLevel" var into
+               init function of the class.
+               By default the logger level is set to "DEBUG", that will keep trace of all the message.
+               When the application goes on production, just change the loggerLevel variable to "ERROR"
+               that will set te logger to keep trace only of "ERROR" and "FATAL" messages.
 
 
 
-Function     : __getStatus (Private)
+Function     : __getStatusLevel (Private)
 
-Description  : Read the status code given and return the correct status label.
-               If the code given is not found within the dictionary that contains the defined label
-               the "UNDEFINED" status will be set.
+Description  : Read the status code given and return the correct status level.
+               If the code given is not found within the dictionary the -1 status will be set.
                
-               Current status labels:
-               0 ERROR
-               1 OK
-               2 WARNING
-               3 INFO
-               4 COMPLETE
+               Current status levels:
+               0 DEBUG
+               1 INFO
+               2 WARN
+               3 ERROR
+               4 FATAL
                
-Parameters   : Integer  code     used to get the status label of the message               
+Parameters   : String   code     used to get the status level of the message               
                
-Return       : String   status   contain the corresponding label
+Return       : int      status   contain the corresponding level
 
 
 
@@ -40,10 +44,10 @@ Description  : Write the given message and other infos into a log file
                Default folder path: ./logs
                
                The message structure is composed by:
-               [DATE WITH TIMESTAMP] [STATUS TAG] [FUNCTION NAME] MESSAGE
+               [DATE WITH TIMESTAMP] [STATUS LEVEL] [FUNCTION NAME] MESSAGE
                
 Parameters   : String   message        contains the message to record
-               Integer  statusCode     used to get the status label of the message
+               String   statusLevel    used to get the level of the message
                String   functionName   show the function name that requested to record the message
                
 Return       : 
@@ -69,7 +73,7 @@ Return       :
 
 How to use example
 
-from util.logger import log
+from Logger import log
 import sys
 functionName = sys._getframe().f_code.co_name
 myLog = log()
@@ -77,29 +81,29 @@ myLog = log()
 def Execute():
     functionName = sys._getframe().f_code.co_name
     try:
-        myLog.writeMessage("Executing division!",3,functionName)
+        myLog.writeMessage("Executing division!","INFO",functionName)
         x = 5/0
-        myLog.writeMessage("Division complete!",1,functionName)
+        myLog.writeMessage("Division complete!","DEBUG",functionName)
     except:
-        myLog.writeMessage("Warning an exception occured!",2,functionName)
+        myLog.writeMessage("Warning an exception occured!","ERROR",functionName)
         raise
         
-myLog.writeMessage("Process start",3,functionName)
+myLog.writeMessage("Process start","INFO",functionName)
 with myLog.error_debug():
     try:
         Execute()
-        myLog.writeMessage("Process completed successfully!",1,functionName)
+        myLog.writeMessage("Process completed successfully!","INFO",functionName)
     except:
-        myLog.writeMessage("Warning an exception occured!",2,functionName)
+        myLog.writeMessage("Warning an exception occured!","ERROR",functionName)
         raise   
 
 Output 
 
 [2020-08-28 16:04:19.646]    [INFO]        [<module>]           Process start 
 [2020-08-28 16:04:19.646]    [INFO]        [Execute]            Executing division! 
-[2020-08-28 16:04:19.647]    [WARNING]     [Execute]            Warning an exception occured! 
-[2020-08-28 16:04:19.647]    [WARNING]     [<module>]           Warning an exception occured! 
-[2020-08-28 16:04:19.652]    [ERROR]       [Execute]            Unhandled exception detected! 
+[2020-08-28 16:04:19.647]    [WARN]        [Execute]            Warning an exception occured! 
+[2020-08-28 16:04:19.647]    [WARN]        [<module>]           Warning an exception occured! 
+[2020-08-28 16:04:19.652]    [FATAL]       [Execute]            Unhandled exception detected! 
 
 ----- Start diagnostic info ----- 
 
@@ -107,9 +111,9 @@ File: <ipython-input-3-d30319679655>
 Function: Execute 
 Code context:
     8:     try:
-    9:         myLog.writeMessage("Executing division!",3,functionName)
+    9:         myLog.writeMessage("Executing division!","INFO",functionName)
    10:>        x = 5/0
-   11:         myLog.writeMessage("Division complete!",1,functionName)
+   11:         myLog.writeMessage("Division complete!","DEBUG",functionName)
    12:     except:
 
 Traceback (most recent call last):
@@ -135,22 +139,27 @@ from contextlib import contextmanager
 
 class log:
     def __init__(self):
+        self.loggerLevel = "DEBUG"
         self.statusCodes = {
-            0: "ERROR",
-            1: "OK",
-            2: "WARNING",
-            3: "INFO",
-            4: "COMPLETE"
+            "DEBUG":0,
+            "INFO":1,
+            "WARN":2,
+            "ERROR":3,
+            "FATAL":4
         }
 
-    def __getStatus(self, code):
+    def __getStatusLevel(self, code):
         status = self.statusCodes.get(code)
         if status is None:
-            status = "UNDEFINED"
+            status = -1
         return status
 
-    def writeMessage(self, message, statusCode, functionName):
-        status = self.__getStatus(statusCode)
+    def writeMessage(self, message, statusLevel, functionName):
+        messageLevel = self.__getStatusLevel(statusLevel)
+        if messageLevel == -1 : 
+            statusLevel = "DEBUG"
+            messageLevel = self.__getStatusLevel(statusLevel)
+        currentLoggerLevel = self.__getStatusLevel(self.loggerLevel)
         folder = './logs'
         filename = 'Random_forest.log'
         fullpath = folder + '/' + filename
@@ -167,7 +176,8 @@ class log:
 
         log = open(fullpath, append_write)
         try:
-            log.write('[' + dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] + ']    {0:13} {1:20} {2} \n'.format('['+status+']','['+functionName+']',message))
+            if messageLevel >= currentLoggerLevel :
+                log.write('[' + dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] + ']    {0:13} {1:20} {2} \n'.format('['+statusLevel+']','['+functionName+']',message))
         finally:
             log.close()
     
@@ -177,7 +187,7 @@ class log:
             yield
         except:
             message = ""
-            message = message + 'Unhandled exception detected! \n'
+            message = message + 'Showing error information below : \n'
             message = message + '\n----- Start diagnostic info ----- \n'
             frame_info = inspect.trace(5)[-1]
             fileName = frame_info[1]
@@ -196,5 +206,5 @@ class log:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             message = message + '\n' + traceback.format_exc()
             message = message + '\n' + '----- End diagnostic info -----' +'\n'
-            self.writeMessage(message,0,functionName)
+            self.writeMessage(message,"FATAL",functionName)
             raise
