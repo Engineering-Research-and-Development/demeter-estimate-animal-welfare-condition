@@ -66,8 +66,6 @@ import org.json.JSONObject;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.ResourceUtils;
 
-//import it.eng.is3lab.animal_welfare.service.AWServiceEndpoints;
-
 public class PyModuleExecutor {
 	private static final Logger log = LogManager.getLogger(PyModuleExecutor.class);
 
