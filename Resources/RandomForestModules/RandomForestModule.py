@@ -3,12 +3,14 @@ Estimate Animal Condition Module - Random Forest Training/Test and Prediction
 
 Author: Luigi di Corrado
 Mail: luigi.dicorrado@eng.it
-Date: 18/09/2020
+Date: 23/09/2020
 Company: Engineering Ingegneria Informatica S.p.A.
 
 Introduction : This module is used to perform the training of the Random Forest algorithm,
                and create the models that will be used on prediction process to 
-               estimate the health of the animals.
+               estimate the health of the animals using two different classes of classification:
+                   - Healthy
+                   - Sick
 
 
 Function     : measure
@@ -43,6 +45,9 @@ Description  : Converts the JSON input into a dataframe object, then process the
                models are saved into the configured folder.
                The metrics are calculated using accuracy_score, precision_score and measure functions.
                All the tested data and metrics are returned as output using JSON.
+               The JSON output contains the following roots:
+                   - animalData        Contains data about animal condition
+                   - metricsData       Contains all the metrics data of the algorithm
                
 Parameters   : str   JsonData     - String that contains the JSON data to be processed
                
@@ -55,6 +60,8 @@ Function     : execRFPrediction
 Description  : Converts the JSON input into a dataframe object, then process the data to fit the relative
                hillness and load the models before start the prediction using Random Forest.
                At the end of the process, the output data is converted into JSON.
+               The JSON output contains the following roots:
+                   - animalData        Contains data about animal condition
                
 Parameters   : str   JsonData     - String that contains the JSON data to be processed
                
@@ -75,7 +82,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from Logger import log
 
-class RandomForest: 
+class AnimalWelfareRandomForest: 
     def measure(self, y_actual, y_predict):
         TP = 0
         FP = 0
@@ -115,7 +122,7 @@ class RandomForest:
         # Estimate Animal Welfare Condition - Training and Testing
         with myLog.error_debug():
             try:
-                myLog.writeMessage('Preparing to execute Random Forest training phase of Estimate Animal Welfare Condition ...',"INFO2",functionName)
+                myLog.writeMessage('Preparing to execute Random Forest training phase of Estimate Animal Welfare Condition ...',"INFO",functionName)
 
                 # Check if directory exists, or create it
                 try:
@@ -286,7 +293,7 @@ class RandomForest:
                 jsonDataset_decoded = json.loads(jsonDataset)
                 jsonDataset_decoded = {'animalData': jsonDataset_decoded}
                 jsonMetrics_decoded = json.loads(jsonMetrics)
-                jsonMetrics_decoded = {'metrics': jsonMetrics_decoded}
+                jsonMetrics_decoded = {'metricsData': jsonMetrics_decoded}
                 myLog.writeMessage('Roots successfully added!',"DEBUG",functionName)
 
                 # Decode json that contains metrics element and update the prediction json

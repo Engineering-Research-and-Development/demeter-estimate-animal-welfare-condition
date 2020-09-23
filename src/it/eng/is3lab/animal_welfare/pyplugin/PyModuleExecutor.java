@@ -3,7 +3,7 @@
  * 
  * Author: Luigi di Corrado
  * Mail: luigi.dicorrado@eng.it
- * Date: 18/09/2020
+ * Date: 23/09/2020
  * Company: Engineering Ingegneria Informatica S.p.A.
  * 
  * Define all the process to configure and use the python interpreter
@@ -124,7 +124,7 @@ public class PyModuleExecutor {
 			// Proxify the call to a python class.
 	        PyModule rfModule = PyModule.importModule("RandomForestModule");
 	        log.debug("Calling the random forest module class.");
-	        PyObject rfObject = rfModule.call("RandomForest");
+	        PyObject rfObject = rfModule.call("AnimalWelfareRandomForest");
 	        RFModulePlugin rfPlugIn = rfObject.createProxy(RFModulePlugin.class);
 	        // Execute the python function.
 	        switch(operation) 
