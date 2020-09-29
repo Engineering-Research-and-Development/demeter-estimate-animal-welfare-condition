@@ -87,7 +87,7 @@ public class PyModuleExecutor {
             );
             List<String> cleanedExtraPaths = new ArrayList<>(extraPaths.size());
 
-            Path tempDirectory = Files.createTempDirectory("lib-");
+            Path tempDirectory = Files.createTempDirectory("AW-lib-");
             // This Hook is not working. Need another solution
             Runtime.getRuntime().addShutdownHook(new Thread(() -> FileSystemUtils.deleteRecursively(((java.nio.file.Path) tempDirectory).toFile())));
             cleanedExtraPaths.add(tempDirectory.toString());

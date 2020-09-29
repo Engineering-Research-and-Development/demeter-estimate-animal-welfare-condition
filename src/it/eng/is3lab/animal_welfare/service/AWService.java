@@ -18,8 +18,12 @@ import javax.ws.rs.core.Response;
 
 public interface AWService {
 	
-	public Response training(@Context HttpServletRequest request, InputStream requestBody) throws IOException;
+	public Response training();
 	
-	public Response prediction(@Context HttpServletRequest request, InputStream requestBody) throws IOException;
+	public Response prediction();
+	
+	public Response sendDatasetTraining(@Context HttpServletRequest request, InputStream requestBody) throws IOException;
+	
+	public Response sendDatasetPrediction(@Context HttpServletRequest request, InputStream requestBody) throws IOException;
 
 }
