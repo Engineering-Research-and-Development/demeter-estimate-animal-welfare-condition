@@ -75,12 +75,12 @@ http://[HOST]:[PORT]/EstimateAnimalWelfareConditionModule/ENDPOINT
 
 This table lists all the endpoint information
 
-| URL                              | Type     | Used for                                                             | Input                                  | Output                                                  |
-| :------------------------------- | :------: | :------------------------------------------------------------------- | :------------------------------------- | :------------------------------------------------------ |
-| **/v1/animalWelfareTraininig**   | **POST** | Train the algorithm, calculate the metrics and store the result data | Json data with actual health condition | A simple message with info about the process            |
-| **/v1/animalWelfareTraininig**   | **GET**  | Retrieve the training result data that was stored                    |                                        | Json with test predicted health condition and metrics   |
-| **/v1/animalWelfarePredictions** | **POST** | Estimate the health condition and store the result data              | Json with data to be processed         | A simple message with info about the process            |
-| **/v1/animalWelfarePredictions** | **GET**  | Retrieve the prediction result data that was stored                  |                                        | Json with predicted health condition                    |
+| URL                             | Type     | Used for                                                             | Input                                  | Output                                                |
+| :------------------------------ | :------: | :------------------------------------------------------------------- | :------------------------------------- | :---------------------------------------------------- |
+| **/v1/animalWelfareTraininig**  | **POST** | Train the algorithm, calculate the metrics and store the result data | Json data with actual health condition | A simple message with info about the process          |
+| **/v1/animalWelfareTraininig**  | **GET**  | Retrieve the training result data that was stored                    |                                        | Json with test predicted health condition and metrics |
+| **/v1/animalWelfarePrediction** | **POST** | Estimate the health condition and store the result data              | Json with data to be processed         | A simple message with info about the process          |
+| **/v1/animalWelfarePrediction** | **GET**  | Retrieve the prediction result data that was stored                  |                                        | Json with predicted health condition                  |
 
 ## How to use
 **TO DO**
