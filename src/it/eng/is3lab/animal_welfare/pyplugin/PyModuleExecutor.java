@@ -82,8 +82,10 @@ public class PyModuleExecutor {
         if (!PyLib.isPythonRunning()) {
         	log.debug("Preparing to configure Python modules path");
             List<String> extraPaths = Arrays.asList(
-                    "classpath:RandomForestModule.py",
-                    "classpath:Logger.py"
+                    "classpath:AWRandomForestModule.py",
+                    "classpath:AWLogger.py",
+                    "classpath:MQRandomForestModule.py",
+                    "classpath:MQLogger.py"
             );
             List<String> cleanedExtraPaths = new ArrayList<>(extraPaths.size());
 
@@ -122,7 +124,7 @@ public class PyModuleExecutor {
 			initInterpreter();
 			log.debug("Importing random forest module into interpreter.");
 			// Proxify the call to a python class.
-	        PyModule rfModule = PyModule.importModule("RandomForestModule");
+	        PyModule rfModule = PyModule.importModule("AWRandomForestModule");
 	        log.debug("Calling the random forest module class.");
 	        PyObject rfObject = rfModule.call("AnimalWelfareRandomForest");
 	        RFModulePlugin rfPlugIn = rfObject.createProxy(RFModulePlugin.class);

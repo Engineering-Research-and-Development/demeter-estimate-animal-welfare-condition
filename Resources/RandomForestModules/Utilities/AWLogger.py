@@ -161,7 +161,7 @@ class log:
             messageLevel = self.__getStatusLevel(statusLevel)
         currentLoggerLevel = self.__getStatusLevel(self.loggerLevel)
         folder = './logs'
-        filename = 'animal_welfare.log'
+        filename = 'AWRandomForest.log'
         fullpath = folder + '/' + filename
         try:
             # Check if directory exists, or create it

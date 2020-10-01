@@ -201,7 +201,8 @@ public class AWServiceEndpoints implements AWService {
 	public Response sendDatasetTraining(@Context HttpServletRequest request, InputStream requestBody) {
     	try {
     		log.debug("Send dataset training endpoint reached!");
-    		this.readDataAndStore(requestBody,"Training");
+    		//this.readDataAndStore(requestBody,"Training");
+    		this.readDataAndSend(requestBody, "Training");
     		return Response.ok("Data received successfully!").build();
 		} catch (Exception e) {
 			log.error("An exception occured!",e);
@@ -216,7 +217,8 @@ public class AWServiceEndpoints implements AWService {
 	public Response sendDatasetPrediction(@Context HttpServletRequest request, InputStream requestBody) {
     	try {
     		log.debug("Send dataset prediction endpoint reached!");
-    		this.readDataAndStore(requestBody,"Prediction");
+    		//this.readDataAndStore(requestBody,"Prediction");
+    		this.readDataAndSend(requestBody, "Prediction");
     		return Response.ok("Data received successfully!").build();
 		} catch (Exception e) {
 			log.error("An exception occured!",e);
@@ -228,14 +230,15 @@ public class AWServiceEndpoints implements AWService {
     private String initDataAndSend(String operation) {
     	log.debug("Initializing input data.");
     	String jsonDataOutput = "";
-    	String jsonDataInput = "";
-    	PyModuleExecutor pyExe = new PyModuleExecutor();
+    	//String jsonDataInput = "";
+    	//PyModuleExecutor pyExe = new PyModuleExecutor();
         log.debug("Initialization completed!");
     	try {
     		log.debug("Reading data...");
-    		jsonDataInput = AWDataManagement.readFromFile(operation);
-	        log.debug("Sending data to python executor class.");
-        	jsonDataOutput = pyExe.executeFunction(jsonDataInput,operation);
+    		//jsonDataInput = AWDataManagement.readFromFile(operation);
+    		jsonDataOutput = AWDataManagement.readFromFile(operation);
+	        //log.debug("Sending data to python executor class.");
+        	//jsonDataOutput = pyExe.executeFunction(jsonDataInput,operation);
 		} catch (Exception e) {
 			log.error("An exception occured!",e);
 			e.printStackTrace();
@@ -257,6 +260,43 @@ public class AWServiceEndpoints implements AWService {
 	        }
 	        log.debug("Store dataset to file.");
 	        AWDataManagement.storeToFile(jsonDataInput.toString(),operation);	        
+		} catch (IOException e) {
+			log.error("An exception occured!",e);
+			e.printStackTrace();
+		} finally {
+    		if (reader != null) {
+    			try {
+    				log.debug("Closing the reader.");
+    				reader.close();
+    			}
+    			catch (IOException e) {
+    				log.error("An exception occured!",e);
+    				e.printStackTrace();
+    			}
+    		}
+    	}
+    }
+    
+    private void readDataAndSend(InputStream requestBody,String operation) {
+    	log.debug("Init reading data and store method...");
+    	String jsonDataOutput = "";
+    	String line;
+    	PyModuleExecutor pyExe = new PyModuleExecutor();
+    	InputStreamReader inputStream = new InputStreamReader(requestBody);
+		BufferedReader reader = new BufferedReader(inputStream);
+        StringBuilder jsonDataInput = new StringBuilder();
+        log.debug("Initialization completed!");
+    	try {
+    		log.debug("Reading request body.");
+	        while ((line = reader.readLine()) != null) {
+	        	jsonDataInput.append(line);
+	        }
+	        //log.debug("Store dataset to file.");
+	        //AWDataManagement.storeToFile(jsonDataInput.toString(),operation);
+	        log.debug("Sending data to python executor class.");
+        	jsonDataOutput = pyExe.executeFunction(jsonDataInput.toString(),operation);
+        	log.debug("Store dataset to file.");
+	        AWDataManagement.storeToFile(jsonDataOutput,operation);
 		} catch (IOException e) {
 			log.error("An exception occured!",e);
 			e.printStackTrace();

@@ -14,7 +14,7 @@ public class AWDataManagement {
 	
 	public static void storeToFile(String dataToStore, String operation) {
 		log.debug("Storing data into file.");
-		String fileName = operation+"_AWJsonData.txt";
+		String fileName = operation+"_AnimalWelfare.json";
 		String filePath = System.getenv("JSON_FILE_PATH");
 		log.debug("Data file directory: "+filePath+fileName);
 		BufferedWriter writer = null;
@@ -42,7 +42,7 @@ public class AWDataManagement {
 	
 	public static String readFromFile(String operation) {
 		log.debug("Reading data from file.");
-		String fileName = operation+"_AWJsonData.txt";
+		String fileName = operation+"_AnimalWelfare.json";
 		String filePath = System.getenv("JSON_FILE_PATH");
 		String line;
 		String outData = "";

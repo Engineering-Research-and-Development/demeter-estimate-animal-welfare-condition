@@ -3,7 +3,7 @@ Estimate Animal Condition Module - Random Forest Training/Test and Prediction
 
 Author: Luigi di Corrado
 Mail: luigi.dicorrado@eng.it
-Date: 23/09/2020
+Date: 01/10/2020
 Company: Engineering Ingegneria Informatica S.p.A.
 
 Introduction : This module is used to perform the training of the Random Forest algorithm,
@@ -80,7 +80,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
-from Logger import log
+from AWLogger import log
 
 class AnimalWelfareRandomForest: 
     def measure(self, y_actual, y_predict):
@@ -115,9 +115,9 @@ class AnimalWelfareRandomForest:
         # MODEL SETTINGS
         ModelFolderPath = './models'
         PrefixModel = 'Cow'
-        LamenessModelName = PrefixModel + '_LamenessModel'
-        KetosisModelName = PrefixModel + '_KetosisModel'
-        MastitisModelName = PrefixModel + '_MastitisModel'
+        LamenessModelName = PrefixModel + 'LamenessModel'
+        KetosisModelName = PrefixModel + 'KetosisModel'
+        MastitisModelName = PrefixModel + 'MastitisModel'
 
         # Estimate Animal Welfare Condition - Training and Testing
         with myLog.error_debug():
@@ -278,7 +278,7 @@ class AnimalWelfareRandomForest:
                                                           dfActualKetosis, dfPredictedKetosis, 
                                                           dfActualMastitis, dfPredictedMastitis])
                 dsPredictions.sort_index(inplace=True)
-                dsPredictions['Date'] = pd.to_datetime(dsPredictions['Date'], format='%Y-%m-%d').dt.strftime('%d/%m/%Y')
+                #dsPredictions['Date'] = pd.to_datetime(dsPredictions['Date'], format='%Y-%m-%d').dt.strftime('%d/%m/%Y')
                 dsPredictions = dsPredictions.reset_index()
                 myLog.writeMessage('Output dataset preparation completed!', "DEBUG",functionName)
 
@@ -318,9 +318,9 @@ class AnimalWelfareRandomForest:
         modelsNotExists = False
         ModelFolderPath = './models'
         PrefixModel = 'Cow'
-        LamenessModelName = PrefixModel + '_LamenessModel'
-        KetosisModelName = PrefixModel + '_KetosisModel'
-        MastitisModelName = PrefixModel + '_MastitisModel'
+        LamenessModelName = PrefixModel + 'LamenessModel'
+        KetosisModelName = PrefixModel + 'KetosisModel'
+        MastitisModelName = PrefixModel + 'MastitisModel'
         
         myLog.writeMessage('Preparing to execute Random Forest Predictions of Estimate Animal Welfare Condition ...',"INFO",functionName)
         # Estimate Animal Welfare Condition - Prediction
