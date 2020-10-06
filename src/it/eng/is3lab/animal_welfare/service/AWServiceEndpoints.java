@@ -147,6 +147,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -154,10 +155,10 @@ import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 
 import it.eng.is3lab.animal_welfare.pyplugin.PyModuleExecutor;
+import it.eng.is3lab.animal_welfare.pyplugin.RFConfigurator;
 
 @Path("/v1")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -169,14 +170,20 @@ public class AWServiceEndpoints implements AWService {
     @Path("/animalWelfareTraining")
     @Formatted
 	public Response training() {
+    	Result result = new Result();
     	try {
-    		log.debug("Training endpoint reached!");
+    		log.debug("Training endpoint reached!");   		
     		String jsonDataOutput = this.initDataAndSend("Training");
-    		return Response.ok(jsonDataOutput).build();
+    		log.debug("Training dataset successfully retrieved!");
+    		log.debug("==========================================================");
+    		return Response.status(200).entity(jsonDataOutput).build();
 		} catch (Exception e) {
 			log.error("An exception occured!",e);
 			e.printStackTrace();
-			return Response.ok(e).build();
+			result.setErrorCode("1");
+			result.setErrorDesc(e.toString());
+			result.setResult(false);
+			return Response.status(500).entity(result).build();
 		}
 	}
 
@@ -184,14 +191,20 @@ public class AWServiceEndpoints implements AWService {
     @Path("/animalWelfarePrediction")
     @Formatted
 	public Response prediction() {
+    	Result result = new Result();
     	try {
     		log.debug("Prediction endpoint reached!");
     		String jsonDataOutput = this.initDataAndSend("Prediction");
-    		return Response.ok(jsonDataOutput).build();
+    		log.debug("Prediction dataset successfully retrieved!");
+    		log.debug("==========================================================");
+    		return Response.status(200).entity(jsonDataOutput).build();
 		} catch (Exception e) {
 			log.error("An exception occured!",e);
 			e.printStackTrace();
-			return Response.ok(e).build();
+			result.setErrorCode("1");
+			result.setErrorDesc(e.toString());
+			result.setResult(false);
+			return Response.status(500).entity(result).build();
 		}
 	}
     
@@ -199,15 +212,48 @@ public class AWServiceEndpoints implements AWService {
     @Path("/animalWelfareTraining")
     @Formatted
 	public Response sendDatasetTraining(@Context HttpServletRequest request, InputStream requestBody) {
+    	Result result = new Result();
     	try {
-    		log.debug("Send dataset training endpoint reached!");
+    		log.debug("Send training dataset endpoint reached!");
     		//this.readDataAndStore(requestBody,"Training");
     		this.readDataAndSend(requestBody, "Training");
-    		return Response.ok("Data received successfully!").build();
+    		log.debug("Send training dataset complete!");
+    		log.debug("==========================================================");
+    		return Response.status(200).entity("Data received successfully!").build();
 		} catch (Exception e) {
 			log.error("An exception occured!",e);
 			e.printStackTrace();
-			return Response.ok(e).build();
+			result.setErrorCode("1");
+			result.setErrorDesc(e.toString());
+			result.setResult(false);
+			return Response.status(500).entity(result).build();
+		}
+	}
+    
+    @POST
+    @Path("/animalWelfareTraining/randomstate/{randomstate}/estimators/{estimators}")
+    @Formatted
+	public Response configAndSendDatasetTraining(@Context HttpServletRequest request, 
+			@PathParam("randomstate") int randomstate,
+			@PathParam("estimators") int estimators,
+			InputStream requestBody) {
+    	Result result = new Result();
+    	try {
+    		log.debug("Config Send training dataset endpoint reached!");
+    		RFConfigurator rfConf = new RFConfigurator();
+    		rfConf.setConfiguration(randomstate,estimators);
+    		//this.readDataAndStore(requestBody,"Training");
+    		this.readDataAndSend(requestBody, "Training");
+    		log.debug("Send training dataset complete!");
+    		log.debug("==========================================================");
+    		return Response.status(200).entity("Data received successfully!").build();
+		} catch (Exception e) {
+			log.error("An exception occured!",e);
+			e.printStackTrace();
+			result.setErrorCode("1");
+			result.setErrorDesc(e.toString());
+			result.setResult(false);
+			return Response.status(500).entity(result).build();
 		}
 	}
     
@@ -215,15 +261,21 @@ public class AWServiceEndpoints implements AWService {
     @Path("/animalWelfarePrediction")
     @Formatted
 	public Response sendDatasetPrediction(@Context HttpServletRequest request, InputStream requestBody) {
+    	Result result = new Result();
     	try {
-    		log.debug("Send dataset prediction endpoint reached!");
+    		log.debug("Send prediction dataset endpoint reached!");
     		//this.readDataAndStore(requestBody,"Prediction");
     		this.readDataAndSend(requestBody, "Prediction");
-    		return Response.ok("Data received successfully!").build();
+    		log.debug("Send prediction dataset complete!");
+    		log.debug("==========================================================");
+    		return Response.status(200).entity("Data received successfully!").build();
 		} catch (Exception e) {
 			log.error("An exception occured!",e);
 			e.printStackTrace();
-			return Response.ok(e).build();
+			result.setErrorCode("1");
+			result.setErrorDesc(e.toString());
+			result.setResult(false);
+			return Response.status(500).entity(result).build();
 		}
 	}
     
@@ -246,7 +298,7 @@ public class AWServiceEndpoints implements AWService {
 		return jsonDataOutput;
     }
     
-    private void readDataAndStore(InputStream requestBody,String operation) {
+    /*private void readDataAndStore(InputStream requestBody,String operation) {
     	log.debug("Init reading data and store method...");
     	String line;
     	InputStreamReader inputStream = new InputStreamReader(requestBody);
@@ -276,6 +328,7 @@ public class AWServiceEndpoints implements AWService {
     		}
     	}
     }
+    */
     
     private void readDataAndSend(InputStream requestBody,String operation) {
     	log.debug("Init reading data and store method...");

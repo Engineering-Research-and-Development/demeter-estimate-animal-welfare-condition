@@ -83,6 +83,7 @@ import joblib
 import sys
 import os
 import json
+import configparser
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
@@ -118,21 +119,41 @@ class MilkQualityRandomForest:
         return(TP, FP, TN, FN, MFPR, MTPR, MPPV, MACC)
 
     def execRFTraining(self, JsonData):
+        # CONFIG FILE PATH  !!! TO BE CHANGED ON DOCKER
+        configFilePath = 'C:/Tomcat/apache-tomcat-7.0.104/webapps/EstimateMilkQualityModule/WEB-INF/classes/python/resources/serviceConf.properties'
+        # WORKING DIRECTORY !!! TO BE CHANGED ON DOCKER
+        workDir = 'C:/Users/luidicorra/Desktop/pythonRF'
+        os.chdir(workDir)
+        
         # LOGGING SETTINGS
         functionName = sys._getframe().f_code.co_name
         myLog = log()
-
-        # TRAINING SETTINGS
-        rs = 42  # Random State
-
-        # MODEL SETTINGS
-        ModelFolderPath = './models'
-        PrefixModel = 'MilkQuality'
-        TraceabilityModelName = PrefixModel + 'TraceabilityModel'
-
+        
         # Estimate Milk Quality - Training and Testing
         with myLog.error_debug():
             try:
+                myLog.writeMessage("Working directory set to: "+os.path.abspath(os.getcwd()),"DEBUG",functionName)
+                myLog.writeMessage("Module temp directory in use: "+os.path.join(os.path.dirname(__file__)),"DEBUG",functionName)
+                # LOADING CONFIGURATION FROM PROPERTIES FILE
+                myLog.writeMessage("Loading configuration from properties file...","DEBUG",functionName)
+                config = configparser.ConfigParser()
+                #config = configparser.RawConfigParser(os.path.join(os.path.dirname(__file__)),'serviceConf.properties')
+                #config.read(os.path.join(os.path.dirname(__file__))+'\\serviceConf.properties')
+                config.read(configFilePath)
+                # TRAINING SETTINGS
+                rs = int(config.get('PyRandomForest', 'milkquality.randomForest.trainingSettings.randomState'))  # Random State
+                myLog.writeMessage("Random state set at: "+str(rs),"DEBUG",functionName)
+                estimators = int(config.get('PyRandomForest', 'milkquality.randomForest.trainingSettings.estimators'))
+                myLog.writeMessage("Estimators set at: "+str(estimators),"DEBUG",functionName)
+        
+                # MODEL SETTINGS
+                ModelFolderPath = config.get('PyRandomForest', 'milkquality.randomForest.commonSettings.modelfilePath')
+                myLog.writeMessage("Model directory set at: "+ModelFolderPath,"DEBUG",functionName)
+                PrefixModel = config.get('PyRandomForest', 'milkquality.randomForest.commonSettings.modelNamePrefix')
+                myLog.writeMessage("Model name prefix set at: "+PrefixModel,"DEBUG",functionName)
+                TraceabilityModelName = PrefixModel + 'Model'
+
+        
                 myLog.writeMessage('Preparing to execute Random Forest training phase of Estimate Milk Quality ...',"INFO",functionName)
 
                 # Check if directory exists, or create it
@@ -174,7 +195,7 @@ class MilkQualityRandomForest:
 
                 # Training phase and testing
                 myLog.writeMessage('Executing training and testing ...',"DEBUG",functionName)
-                TraceabilityClassifier = RandomForestClassifier(n_estimators = 100, random_state = rs)
+                TraceabilityClassifier = RandomForestClassifier(n_estimators = estimators, random_state = rs)
                 TraceabilityClassifier.fit(Traceability_X_train, Traceability_y_train)
                 Traceability_y_pred = TraceabilityClassifier.predict(Traceability_X_test)
                 myLog.writeMessage('Training and testing completed!',"DEBUG",functionName)
@@ -267,21 +288,38 @@ class MilkQualityRandomForest:
                 raise
 
     def execRFPrediction(self, JsonData):
+        # CONFIG FILE PATH  !!! TO BE CHANGED ON DOCKER
+        configFilePath = 'C:/Tomcat/apache-tomcat-7.0.104/webapps/EstimateMilkQualityModule/WEB-INF/classes/python/resources/serviceConf.properties'
+        # WORKING DIRECTORY !!! TO BE CHANGED ON DOCKER
+        workDir = 'C:/Users/luidicorra/Desktop/pythonRF'
+        os.chdir(workDir)
+        
         # LOGGING SETTINGS
         functionName = sys._getframe().f_code.co_name
         myLog = log()
         
-        # LOADING MODELS SETTINGS
-        modelsNotExists = False
-        ModelFolderPath = './models'
-        PrefixModel = 'MilkQuality'
-        TraceabilityModelName = PrefixModel + 'TraceabilityModel'
-        
-        myLog.writeMessage('Preparing to execute Random Forest Predictions of Estimate Milk Quality ...',"INFO",functionName)
-        # Estimate Animal Welfare Condition - Prediction
-        
         with myLog.error_debug():
             try:
+                myLog.writeMessage("Working directory set to: "+os.path.abspath(os.getcwd()),"DEBUG",functionName)
+                myLog.writeMessage("Module temp directory in use: "+os.path.join(os.path.dirname(__file__)),"DEBUG",functionName)
+                
+                # LOADING CONFIGURATION FROM PROPERTIES FILE
+                myLog.writeMessage("Loading configuration from properties file...","DEBUG",functionName)
+                config = configparser.ConfigParser()
+                config.read(configFilePath)
+                
+                # LOADING MODELS SETTINGS
+                modelsNotExists = False
+                ModelFolderPath = config.get('PyRandomForest', 'milkquality.randomForest.commonSettings.modelfilePath')
+                myLog.writeMessage("Model directory set at: "+ModelFolderPath,"DEBUG",functionName)
+                PrefixModel = config.get('PyRandomForest', 'milkquality.randomForest.commonSettings.modelNamePrefix')
+                myLog.writeMessage("Model name prefix set at: "+PrefixModel,"DEBUG",functionName)
+                TraceabilityModelName = PrefixModel + 'Model'
+                
+                myLog.writeMessage('Preparing to execute Random Forest Predictions of Estimate Milk Quality ...',"INFO",functionName)
+                # Estimate Animal Welfare Condition - Prediction
+        
+        
                 
                 # Check if models folder exists
                 myLog.writeMessage('Checking models folder ...',"DEBUG",functionName)

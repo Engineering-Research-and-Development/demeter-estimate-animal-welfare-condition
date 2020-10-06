@@ -60,6 +60,12 @@
     		<artifactId>log4j-core</artifactId>
     		<version>2.13.3</version>
  		</dependency>
+ 		<!--  Set up commons configuration -->
+ 		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.10</version>
+		</dependency>
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -67,31 +73,38 @@
     <resources>
       <!-- Module Resources -->
       <resource>
-        <directory>Resources/RandomForestModules</directory>
+        <directory>src/python/randomForestModules</directory>
         <excludes>
           <exclude>**/*.java</exclude>
         </excludes>
       </resource>
       <!-- Util Resources -->
       <resource>
-        <directory>Resources/RandomForestModules/Utilities</directory>
+        <directory>src/python/randomForestModules/utilities</directory>
         <excludes>
           <exclude>**/*.java</exclude>
         </excludes>
       </resource>
       <!-- Jpy Config Resources -->
       <resource>
-        <directory>Resources/jpy</directory>
+        <directory>src/python/resources/jpy</directory>
         <excludes>
           <exclude>**/*.java</exclude>
         </excludes>
       </resource>
       <!-- log4j Config Resources -->
       <resource>
-        <directory>Resources/log4j</directory>
+        <directory>src/log4j</directory>
         <excludes>
           <exclude>**/*.java</exclude>
         </excludes>
+      </resource>
+      <!-- Py Service Config Resources -->
+      <resource>
+        <directory>src/python/resources</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>      
       </resource>
     </resources>
     <plugins>

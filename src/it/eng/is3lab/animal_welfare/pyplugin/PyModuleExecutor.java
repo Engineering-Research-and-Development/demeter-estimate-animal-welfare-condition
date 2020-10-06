@@ -122,18 +122,26 @@ public class PyModuleExecutor {
 		String jsonDataResult = "";
 		try {
 			initInterpreter();
+			RFConfigurator rfConf = new RFConfigurator();
+        	rfConf.loadConfiguration();
+        	String configFilePath = rfConf.getConfigFilePath();
+        	String workDir = rfConf.getWorkDir();
 			log.debug("Importing random forest module into interpreter.");
 			// Proxify the call to a python class.
 	        PyModule rfModule = PyModule.importModule("AWRandomForestModule");
 	        log.debug("Calling the random forest module class.");
 	        PyObject rfObject = rfModule.call("AnimalWelfareRandomForest");
 	        RFModulePlugin rfPlugIn = rfObject.createProxy(RFModulePlugin.class);
+	        log.debug("Initialize random forest module configuration");
+	        rfPlugIn.initConfiguration(configFilePath, workDir);
 	        // Execute the python function.
 	        switch(operation) 
 	        { 
 	            case "Training": 
 	            	log.debug("TRAINING: Executing training function.");
-	            	jsonDataResult = rfPlugIn.execRFTraining(jsonData);
+	            	int rs = rfConf.getRandomState();
+	            	int est = rfConf.getEstimators();
+	            	jsonDataResult = rfPlugIn.execRFTraining(jsonData,rs,est);
 	                break; 
 	            case "Prediction": 
 	            	log.debug("PREDICTION: Executing prediction function.");

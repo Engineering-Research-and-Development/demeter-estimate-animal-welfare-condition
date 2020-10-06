@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -25,5 +26,7 @@ public interface AWService {
 	public Response sendDatasetTraining(@Context HttpServletRequest request, InputStream requestBody) throws IOException;
 	
 	public Response sendDatasetPrediction(@Context HttpServletRequest request, InputStream requestBody) throws IOException;
+	
+	public Response configAndSendDatasetTraining(@Context HttpServletRequest request, int randomstate, int estimators, InputStream requestBody) throws IOException;
 
 }

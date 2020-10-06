@@ -40,7 +40,7 @@ Function     : writeMessage
 
 Description  : Write the given message and other infos into a log file
 
-               Default filename is: milk_quality.log
+               Default filename is: animal_welfare.log
                Default folder path: ./logs
                
                The message structure is composed by:
@@ -135,11 +135,17 @@ import os
 import inspect
 import sys
 import traceback
+import configparser
 from contextlib import contextmanager
 
 class log:
     def __init__(self):
-        self.loggerLevel = "DEBUG"
+        self.config = configparser.ConfigParser()
+
+        self.loggerLevel = ''
+        self.folder = ''
+        self.filename = ''
+        self.fullpath = ''
         self.statusCodes = {
             "DEBUG":0,
             "INFO":1,
@@ -147,6 +153,13 @@ class log:
             "ERROR":3,
             "FATAL":4
         }
+        
+    def initConfiguration(self, confFile):
+        self.config.read(confFile)
+        self.loggerLevel = self.config.get('PyLogger', 'animalwelfare.logger.level')
+        self.folder = self.config.get('PyLogger', 'animalwelfare.logger.filePath')
+        self.filename = self.config.get('PyLogger', 'animalwelfare.logger.fileName')
+        self.fullpath = self.folder + '/' + self.filename
 
     def __getStatusLevel(self, code):
         status = self.statusCodes.get(code)
@@ -159,22 +172,19 @@ class log:
         if messageLevel == -1 : 
             statusLevel = "DEBUG"
             messageLevel = self.__getStatusLevel(statusLevel)
-        currentLoggerLevel = self.__getStatusLevel(self.loggerLevel)
-        folder = './logs'
-        filename = 'MQRandomForest.log'
-        fullpath = folder + '/' + filename
+        currentLoggerLevel = self.__getStatusLevel(self.loggerLevel)      
         try:
             # Check if directory exists, or create it
-            os.makedirs(folder)
+            os.makedirs(self.folder)
         except FileExistsError:
             # Directory already exists
             pass
-        if os.path.exists(fullpath):
+        if os.path.exists(self.fullpath):
             append_write = 'a'  # append
         else:
             append_write = 'w'  # new file
 
-        log = open(fullpath, append_write)
+        log = open(self.fullpath, append_write)
         try:
             if messageLevel >= currentLoggerLevel :
                 log.write('[' + dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] + ']    {0:13} {1:20} {2} \n'.format('['+statusLevel+']','['+functionName+']',message))

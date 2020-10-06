@@ -40,7 +40,7 @@ Function     : writeMessage
 
 Description  : Write the given message and other infos into a log file
 
-               Default filename is: animal_welfare.log
+               Default filename is: milk_quality.log
                Default folder path: ./logs
                
                The message structure is composed by:
@@ -135,11 +135,20 @@ import os
 import inspect
 import sys
 import traceback
+import configparser
 from contextlib import contextmanager
 
 class log:
     def __init__(self):
-        self.loggerLevel = "DEBUG"
+        # CONFIG FILE PATH  !!! TO BE CHANGED ON DOCKER
+        configFilePath = 'C:/Tomcat/apache-tomcat-7.0.104/webapps/EstimateMilkQualityModule/WEB-INF/classes/python/resources/serviceConf.properties'
+        config = configparser.ConfigParser()
+        config.read(configFilePath)
+
+        self.loggerLevel = config.get('PyLogger', 'milkquality.logger.level')
+        self.folder = config.get('PyLogger', 'milkquality.logger.filePath')
+        self.filename = config.get('PyLogger', 'milkquality.logger.fileName')
+        self.fullpath = self.folder + '/' + self.filename
         self.statusCodes = {
             "DEBUG":0,
             "INFO":1,
@@ -160,21 +169,18 @@ class log:
             statusLevel = "DEBUG"
             messageLevel = self.__getStatusLevel(statusLevel)
         currentLoggerLevel = self.__getStatusLevel(self.loggerLevel)
-        folder = './logs'
-        filename = 'AWRandomForest.log'
-        fullpath = folder + '/' + filename
         try:
             # Check if directory exists, or create it
-            os.makedirs(folder)
+            os.makedirs(self.folder)
         except FileExistsError:
             # Directory already exists
             pass
-        if os.path.exists(fullpath):
+        if os.path.exists(self.fullpath):
             append_write = 'a'  # append
         else:
             append_write = 'w'  # new file
 
-        log = open(fullpath, append_write)
+        log = open(self.fullpath, append_write)
         try:
             if messageLevel >= currentLoggerLevel :
                 log.write('[' + dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] + ']    {0:13} {1:20} {2} \n'.format('['+statusLevel+']','['+functionName+']',message))
