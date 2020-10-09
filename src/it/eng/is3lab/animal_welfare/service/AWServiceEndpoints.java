@@ -3,7 +3,7 @@
  * 
  * Author: Luigi di Corrado
  * Mail: luigi.dicorrado@eng.it
- * Date: 28/09/2020
+ * Date: 09/10/2020
  * Company: Engineering Ingegneria Informatica S.p.A.
  * 
  * Implements the Animal Welfare Service interface and define the 
@@ -18,6 +18,9 @@
  * Training complete URL example 
  * http://localhost:9080/EstimateAnimalWelfareConditionModule/v1/animalWelfareTraining
  * 
+ * Training with configuration URL example 
+ * http://localhost:9080/EstimateAnimalWelfareConditionModule/v1/animalWelfareTraining/randomstate/42/estimators/100
+ * 
  * Prediction complete URL example 
  * http://localhost:9080/EstimateAnimalWelfareConditionModule/v1/animalWelfarePrediction
  * 
@@ -26,17 +29,14 @@
  * 
  * Endpoint    : /v1/animalWelfareTraining 
  * 
- * Type        : POST
+ * Type        : GET
  * 
  *               KEY          | VALUE
  *               -------------|-----------------
  * Headers     : Content-Type | application/json
  * 		         Accept       | application/json
  *    
- * Description : Read the json content of the body inside the request and send it
- * 				 as input to the Python module executor.
- * 				 After processing the data within random forest training module, 
- * 				 the response will send a json string as output with the processed data.
+ * Description : Get the leatest training data
  * 
  * Request     : Json input data to be sent to random forest training module
  * 
@@ -48,17 +48,14 @@
  * 
  * Endpoint    : /v1/animalWelfarePrediction
  * 
- * Type        : POST
+ * Type        : GET
  * 
  *               KEY          | VALUE
  *               -------------|-----------------
  * Headers     : Content-Type | application/json
  * 		         Accept       | application/json
  * 
- * Description : Read the json string content of the body inside the request and send it
- * 				 as input to the Python module executor.
- * 				 After processing the data within random forest prediction module, 
- * 				 the response will send a json string as output with the processed data.
+ * Description : Get the leatest prediction data
  * 
  * Request     : Json input data to be sent to random forest prediction module
  * 
@@ -77,12 +74,35 @@
  * Headers     : Content-Type | application/json
  * 		         Accept       | application/json
  *    
- * Description : Read the json content of the body inside the request and store it
+ * Description : Read the json content of the body inside the request, execute
+ * 			     random forest training and store output data
  *               into file using readDataAndStore method.
  * 
  * Request     : Json input data to be stored for future training
  * 
- * Response    : Response containing a message about the process
+ * Response    : Response containing the data stored and a message about the process
+ * 
+ * 
+ * 
+ * Method      : configAndSendDatasetTraining
+ * 
+ * Endpoint    : /v1/animalWelfareTraining/randomstate/{int randomstate}/estimators/{int estimators} 
+ * 
+ * Type        : POST
+ * 
+ *               KEY          | VALUE
+ *               -------------|-----------------
+ * Headers     : Content-Type | application/json
+ * 		         Accept       | application/json
+ *    
+ * Description : Read the json content of the body inside the request, 
+ * 				 configure random state and estimators,
+ * 				 execute random forest training and store output data and store it
+ *               into file using readDataAndStore method.
+ * 
+ * Request     : Json input data to be stored for future training
+ * 
+ * Response    : Response containing the data stored and a message about the process
  * 
  * 
  * 
@@ -97,21 +117,20 @@
  * Headers     : Content-Type | application/json
  * 		         Accept       | application/json
  * 
- * Description : Read the json content of the body inside the request and store it
- *               into file using readDataAndStore method.
+ * Description : Read the json content of the body inside the request, execute
+ * 			     random forest prediction and store output data into file 
+ * 				 using readDataAndStore method.
  * 
  * Request     : Json input data to be stored for future training
  * 
- * Response    : Response containing a message about the process
+ * Response    : Response containing the data stored and a message about the process
  * 
  * 
  * 
  * Method      : initDataAndSend 
  *    
- * Description : Initialize the data and send it to the Python module executor class.
- * 				 The operation string is used to choose the file that contains the data.
- * 				 The class AWDataManagement is used to read that file and init the string that will
- * 				 be sent to the python module executor to select the task to perform:
+ * Description : Retrieve the data from json file and send it as Response.
+ * 				 The operation string is used to choose which data to get:
  *               	- "Training"   - Init training data and send it to training method
  *               	- "Prediction" - Init prediction data and send it to prediction method
  * 
@@ -121,10 +140,11 @@
  * 
  * 
  * 
- * Method      : readDataAndStore 
+ * Method      : readDataAndSend 
  *    
- * Description : Read the request body content and store the data into file system.
- * 				 The class AWDataManagement is used to store data into file, the file name is
+ * Description : Read the request body content and send it to the Python module executor class.
+ * 				 The operation string is used to choose which task the python need to execute and
+ * 				 also used by AWDataManagement class to store data into file, the file name is
  * 				 composed by a prefix that will depends on the value stored by the operation var:
  *               	- "Training"   - The method was called by a training POST service
  *               	- "Prediction" - The method was called by a prediction POST service
@@ -213,13 +233,14 @@ public class AWServiceEndpoints implements AWService {
     @Formatted
 	public Response sendDatasetTraining(@Context HttpServletRequest request, InputStream requestBody) {
     	Result result = new Result();
+    	String outputData = "";
     	try {
     		log.debug("Send training dataset endpoint reached!");
     		//this.readDataAndStore(requestBody,"Training");
-    		this.readDataAndSend(requestBody, "Training");
+    		outputData = this.readDataAndSend(requestBody, "Training");
     		log.debug("Send training dataset complete!");
     		log.debug("==========================================================");
-    		return Response.status(200).entity("Data received successfully!").build();
+    		return Response.status(200).entity("RESULT "+outputData).build();
 		} catch (Exception e) {
 			log.error("An exception occured!",e);
 			e.printStackTrace();
@@ -238,15 +259,16 @@ public class AWServiceEndpoints implements AWService {
 			@PathParam("estimators") int estimators,
 			InputStream requestBody) {
     	Result result = new Result();
+    	String outputData = "";
     	try {
     		log.debug("Config Send training dataset endpoint reached!");
     		RFConfigurator rfConf = new RFConfigurator();
     		rfConf.setConfiguration(randomstate,estimators);
     		//this.readDataAndStore(requestBody,"Training");
-    		this.readDataAndSend(requestBody, "Training");
+    		outputData = this.readDataAndSend(requestBody, "Training");
     		log.debug("Send training dataset complete!");
     		log.debug("==========================================================");
-    		return Response.status(200).entity("Data received successfully!").build();
+    		return Response.status(200).entity("RESULT "+outputData).build();
 		} catch (Exception e) {
 			log.error("An exception occured!",e);
 			e.printStackTrace();
@@ -262,13 +284,14 @@ public class AWServiceEndpoints implements AWService {
     @Formatted
 	public Response sendDatasetPrediction(@Context HttpServletRequest request, InputStream requestBody) {
     	Result result = new Result();
+    	String outputData = "";
     	try {
     		log.debug("Send prediction dataset endpoint reached!");
     		//this.readDataAndStore(requestBody,"Prediction");
-    		this.readDataAndSend(requestBody, "Prediction");
+    		outputData = this.readDataAndSend(requestBody, "Prediction");
     		log.debug("Send prediction dataset complete!");
     		log.debug("==========================================================");
-    		return Response.status(200).entity("Data received successfully!").build();
+    		return Response.status(200).entity("RESULT "+outputData).build();
 		} catch (Exception e) {
 			log.error("An exception occured!",e);
 			e.printStackTrace();
@@ -297,40 +320,8 @@ public class AWServiceEndpoints implements AWService {
 		} 
 		return jsonDataOutput;
     }
-    
-    /*private void readDataAndStore(InputStream requestBody,String operation) {
-    	log.debug("Init reading data and store method...");
-    	String line;
-    	InputStreamReader inputStream = new InputStreamReader(requestBody);
-		BufferedReader reader = new BufferedReader(inputStream);
-        StringBuilder jsonDataInput = new StringBuilder();
-        log.debug("Initialization completed!");
-    	try {
-    		log.debug("Reading request body.");
-	        while ((line = reader.readLine()) != null) {
-	        	jsonDataInput.append(line);
-	        }
-	        log.debug("Store dataset to file.");
-	        AWDataManagement.storeToFile(jsonDataInput.toString(),operation);	        
-		} catch (IOException e) {
-			log.error("An exception occured!",e);
-			e.printStackTrace();
-		} finally {
-    		if (reader != null) {
-    			try {
-    				log.debug("Closing the reader.");
-    				reader.close();
-    			}
-    			catch (IOException e) {
-    				log.error("An exception occured!",e);
-    				e.printStackTrace();
-    			}
-    		}
-    	}
-    }
-    */
-    
-    private void readDataAndSend(InputStream requestBody,String operation) {
+
+    private String readDataAndSend(InputStream requestBody,String operation) {
     	log.debug("Init reading data and store method...");
     	String jsonDataOutput = "";
     	String line;
@@ -365,6 +356,7 @@ public class AWServiceEndpoints implements AWService {
     			}
     		}
     	}
+		return jsonDataOutput;
     }
 
 }

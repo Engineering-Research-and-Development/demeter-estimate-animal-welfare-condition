@@ -3,7 +3,7 @@ Custom logger module
 
 Author: Luigi di Corrado
 Mail: luigi.dicorrado@eng.it
-Date: 18/09/2020
+Date: 09/10/2020
 Company: Engineering Ingegneria Informatica S.p.A.
 
 Introduction : This logger is used to track the execution of Random Forest modules, 
@@ -15,6 +15,16 @@ Introduction : This logger is used to track the execution of Random Forest modul
                By default the logger level is set to "DEBUG", that will keep trace of all the message.
                When the application goes on production, just change the loggerLevel variable to "ERROR"
                that will set te logger to keep trace only of "ERROR" and "FATAL" messages.
+
+
+
+Function     : initConfiguration
+
+Description  : Initialize the settings
+               
+Parameters   : string     confFile      contains the path to rfConf.properties to load
+               
+Return       : 
 
 
 

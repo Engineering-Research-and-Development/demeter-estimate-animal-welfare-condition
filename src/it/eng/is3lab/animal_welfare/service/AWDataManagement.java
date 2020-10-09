@@ -1,3 +1,36 @@
+/*
+ * Animal Welfare Data Management
+ * 
+ * Author: Luigi di Corrado
+ * Mail: luigi.dicorrado@eng.it
+ * Date: 09/10/2020
+ * Company: Engineering Ingegneria Informatica S.p.A.
+ * 
+ * Store and Read output data from files.
+ * All the file settings are loaded from serviceConf.properties file
+ * 
+ * 
+ * 
+ * Method      : storeToFile
+ *    
+ * Description : Save data into file, the file name prefix is defined by operation value
+ * 
+ * Parameters  : String    dataToStore
+ * 				 String    operation
+ * 
+ * Return 	   : void
+ * 
+ * 
+ * 
+ * Method      : readFromFile
+ *    
+ * Description : Read the data from file, the operation value is used to choose which file read
+ * 
+ * Parameters  : String    operation
+ * 
+ * Return 	   : String	   outData
+ */
+
 package it.eng.is3lab.animal_welfare.service;
 
 import java.io.BufferedReader;
@@ -13,7 +46,8 @@ import org.apache.logging.log4j.Logger;
 public class AWDataManagement {
 	private static final Logger log = LogManager.getLogger(AWDataManagement.class);
 	private static ResourceBundle properties = ResourceBundle.getBundle("resources/serviceConf");
-	private static String filePath = properties.getString("serviceDataManagement.filePath");
+	private static String workDir = System.getenv(properties.getString("animalwelfare.workDirectory"));
+	private static String filePath = workDir + properties.getString("serviceDataManagement.filePath");
 	private static String fileNameSuffix = properties.getString("serviceDataManagement.fileNameSuffix");
 	private static String fileExtension = properties.getString("serviceDataManagement.fileExtension");
 	

@@ -3,11 +3,12 @@
  * 
  * Author: Luigi di Corrado
  * Mail: luigi.dicorrado@eng.it
- * Date: 23/09/2020
+ * Date: 09/10/2020
  * Company: Engineering Ingegneria Informatica S.p.A.
  * 
  * Define all the process to configure and use the python interpreter
  * within the JPY library.
+ * All the resources paths are get from the serviceConf.properties file.
  * 
  * 
  * 
@@ -17,9 +18,10 @@
  * 				 that are defined in jpyconfig.properties resource.
  * 				 Before running the python interpreter, process the python modules 
  * 				 defined inside the extraPaths list, clean their path and copy them 
- * 				 into Temp default directory inside a "lib-" folder.
+ * 				 into Temp default directory inside a temporary folder that will be deleted
+ * 				 on server shutdown.
  * 				 Then start Python with cleaned extraPaths that reference the modules
- * 				 inside the Temp/lib-XXXXX folder.
+ * 				 inside the Temp/AnimalWelfare-PyMod-XXXXX folder.
  * 
  * Parameters  : 
  * 
@@ -45,7 +47,6 @@
 
 package it.eng.is3lab.animal_welfare.pyplugin;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,16 +66,23 @@ import org.jpy.PyModule;
 import org.jpy.PyObject;
 import org.json.JSONObject;
 import org.springframework.util.FileSystemUtils;
-import org.springframework.util.ResourceUtils;
 
 public class PyModuleExecutor {
 	private static final Logger log = LogManager.getLogger(PyModuleExecutor.class);
+	private static ResourceBundle configuration = ResourceBundle.getBundle("resources/serviceConf");
+	private static String pyModulesRoot = configuration.getString("animalwelfare.pyModuleExecutor.pyModulesRoot");
+	private static String pyModulesUtilities = configuration.getString("animalwelfare.pyModuleExecutor.pyModulesUtilities");
+	private static String jpyConfigPath = configuration.getString("animalwelfare.pyModuleExecutor.jpyConfigPath");
+	// Load Python Modules Paths
+	private static String AWRandomForestModule = configuration.getString("animalwelfare.pyModuleExecutor.AWRandomForestModule");
+	private static String AWLogger = configuration.getString("animalwelfare.pyModuleExecutor.AWLogger");
 
 	private static void initInterpreter() throws Exception {
 		log.debug("Initialize Python Interpreter");
 		log.debug("Loading jpy configuration");
         Properties properties = new Properties();
-        properties.load(new FileInputStream(ResourceUtils.getFile("classpath:jpyconfig.properties")));
+        InputStream jpyconfig = PyModuleExecutor.class.getClassLoader().getResourceAsStream(jpyConfigPath);
+        properties.load(jpyconfig);
         properties.forEach((k, v) -> {
         	log.debug("Setting: "+(String) k+" Value: "+(String) v);
         	System.setProperty((String) k, (String) v);
@@ -82,35 +91,34 @@ public class PyModuleExecutor {
         if (!PyLib.isPythonRunning()) {
         	log.debug("Preparing to configure Python modules path");
             List<String> extraPaths = Arrays.asList(
-                    "classpath:AWRandomForestModule.py",
-                    "classpath:AWLogger.py",
-                    "classpath:MQRandomForestModule.py",
-                    "classpath:MQLogger.py"
+                    AWRandomForestModule,
+                    AWLogger
             );
             List<String> cleanedExtraPaths = new ArrayList<>(extraPaths.size());
 
-            Path tempDirectory = Files.createTempDirectory("AW-lib-");
-            // This Hook is not working. Need another solution
+            Path tempDirectory = Files.createTempDirectory("AnimalWelfare-PyMod-");
             Runtime.getRuntime().addShutdownHook(new Thread(() -> FileSystemUtils.deleteRecursively(((java.nio.file.Path) tempDirectory).toFile())));
             cleanedExtraPaths.add(tempDirectory.toString());
             log.debug("Created temporary directory: "+tempDirectory.toString());
 
             extraPaths.forEach(lib -> {
-                if (lib.startsWith("classpath:")) {
-                    try {
-                        String finalLib = lib.replace("classpath:", "");
-                        log.debug("Copying python module: "+finalLib);
-                        java.nio.file.Path target = Paths.get(tempDirectory.toString(), finalLib);
-                        try (InputStream stream = PyModuleExecutor.class.getClassLoader().getResourceAsStream(finalLib)) {
-                            Files.copy(stream, target, StandardCopyOption.REPLACE_EXISTING);
-                        }
-                    } catch (Exception e) {
-                    	log.error("An exception occured!",e);
-                        e.printStackTrace();
-                    }
-                } else {
-                	log.debug("Loading python module: "+lib);
-                    cleanedExtraPaths.add(lib);
+                try {
+                	String finalLib = "";
+                	InputStream stream = PyModuleExecutor.class.getClassLoader().getResourceAsStream(lib);
+                	if (lib.startsWith(pyModulesUtilities)) {
+                		finalLib = lib.replace(pyModulesUtilities, "");
+                	}
+                	else {
+                		finalLib = lib.replace(pyModulesRoot, "");
+                	}
+                    log.debug("Copying python module: "+finalLib);
+                    java.nio.file.Path target = Paths.get(tempDirectory.toString(), finalLib);
+                    
+                    Files.copy(stream, target, StandardCopyOption.REPLACE_EXISTING);
+                    
+                } catch (Exception e) {
+                	log.error("An exception occured!",e);
+                    e.printStackTrace();
                 }
             });
             log.debug("Python interpreter configured!");
@@ -133,6 +141,8 @@ public class PyModuleExecutor {
 	        PyObject rfObject = rfModule.call("AnimalWelfareRandomForest");
 	        RFModulePlugin rfPlugIn = rfObject.createProxy(RFModulePlugin.class);
 	        log.debug("Initialize random forest module configuration");
+	        log.debug("Random Forest configuration file path: "+configFilePath);
+	        log.debug("Working directory: "+workDir);
 	        rfPlugIn.initConfiguration(configFilePath, workDir);
 	        // Execute the python function.
 	        switch(operation) 
@@ -152,9 +162,9 @@ public class PyModuleExecutor {
 			log.error("An exception occured!",e);
 			e.printStackTrace();
 		} finally {
-			log.debug("Stopping python interpreter.");
-	        PyLib.stopPython();
-	        
+			//log.debug("Stopping python interpreter.");
+	        //PyLib.stopPython(); Bugged
+
 			if (jsonDataResult == "") {
         		log.error("Output data is empty! An error occured while executing python module."
         				+ "Check the Random forest log for more info.");

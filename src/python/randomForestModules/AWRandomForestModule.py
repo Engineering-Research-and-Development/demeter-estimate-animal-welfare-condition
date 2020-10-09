@@ -3,7 +3,7 @@ Estimate Animal Condition Module - Random Forest Training/Test and Prediction
 
 Author: Luigi di Corrado
 Mail: luigi.dicorrado@eng.it
-Date: 01/10/2020
+Date: 09/10/2020
 Company: Engineering Ingegneria Informatica S.p.A.
 
 Introduction : This module is used to perform the training of the Random Forest algorithm,
@@ -11,6 +11,19 @@ Introduction : This module is used to perform the training of the Random Forest 
                estimate the health of the animals using two different classes of classification:
                    - Healthy
                    - Sick
+
+
+
+Function     : initConfiguration
+
+Description  : Set the current work directory and initialize the settings for Logger 
+               and Random Forest Training/Prediction
+               
+Parameters   : string     confFile      contains the path to rfConf.properties to load
+               string     workPath      path to work directory
+               
+Return       : 
+
 
 
 Function     : measure
