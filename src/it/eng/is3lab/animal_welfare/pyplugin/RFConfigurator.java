@@ -46,8 +46,11 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class RFConfigurator {
+	private static final Logger log = LogManager.getLogger(RFConfigurator.class);
 	private int randomState;
 	private int estimators;
 	private String configFilePath;
@@ -86,22 +89,33 @@ public class RFConfigurator {
 	}
 
 	public void setConfiguration(int randomState, int estimators) throws ConfigurationException {
+		log.debug("Setting configuration values...");
 		File propertiesFile = new File(RFConfigurator.class.getClassLoader().getResource("resources/serviceConf.properties").getFile());
 		PropertiesConfiguration config = new PropertiesConfiguration(propertiesFile);           
 		config.setProperty("animalwelfare.randomForest.trainingSettings.randomState", randomState);
+		log.debug("Random state new value: "+randomState);
 		config.setProperty("animalwelfare.randomForest.trainingSettings.estimators", estimators);
+		log.debug("Estimators new value: "+estimators);
 		config.save();
+		log.debug("Configuration file saved!");
 	}
 	
 	public void loadConfiguration() throws ConfigurationException {
+		log.debug("Loading configuration values...");
 		ResourceBundle configuration = ResourceBundle.getBundle("resources/serviceConf");
 		this.setRandomState(Integer.parseInt(configuration.getString("animalwelfare.randomForest.trainingSettings.randomState")));
+		log.debug("Random state value: "+this.getRandomState());
 		this.setEstimators(Integer.parseInt(configuration.getString("animalwelfare.randomForest.trainingSettings.estimators")));
+		log.debug("Estimators value: "+this.getEstimators());
 		String rfResources = System.getenv(configuration.getString("animalwelfare.randomForest.resources"));
+		log.debug("Random forest resources path: "+rfResources);
 		String configFile = configuration.getString("animalwelfare.randomForest.configFile");
+		log.debug("Random forest config file: "+configFile);
 		String rfConfigFilePath = rfResources+configFile;
 		this.setConfigFilePath(rfConfigFilePath);
+		log.debug("Random forest config file path: "+rfConfigFilePath);
 		this.setWorkDir(System.getenv(configuration.getString("animalwelfare.workDirectory")));
+		log.debug("Random forest work directory: "+this.getWorkDir());
 	}
 
 }

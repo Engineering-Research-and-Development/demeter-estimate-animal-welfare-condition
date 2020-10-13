@@ -63,6 +63,8 @@ Description  : Converts the JSON input into a dataframe object, then process the
                    - metricsData       Contains all the metrics data of the algorithm
                
 Parameters   : str   JsonData     - String that contains the JSON data to be processed
+               int   randomState        - Random state value for test phase, it choose random rows
+               int   estimatorsNumbers  - Numbers of estimators to use on training phase
                
 Return       : str   jsonResult   - String that contains all the JSON data to output
 

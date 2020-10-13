@@ -3,7 +3,7 @@ Custom logger module
 
 Author: Luigi di Corrado
 Mail: luigi.dicorrado@eng.it
-Date: 09/10/2020
+Date: 12/10/2020
 Company: Engineering Ingegneria Informatica S.p.A.
 
 Introduction : This logger is used to track the execution of Random Forest modules, 
@@ -50,9 +50,6 @@ Function     : writeMessage
 
 Description  : Write the given message and other infos into a log file
 
-               Default filename is: animal_welfare.log
-               Default folder path: ./logs
-               
                The message structure is composed by:
                [DATE WITH TIMESTAMP] [STATUS LEVEL] [FUNCTION NAME] MESSAGE
                
