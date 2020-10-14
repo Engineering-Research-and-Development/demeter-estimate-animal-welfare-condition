@@ -181,8 +181,8 @@ import it.eng.is3lab.animal_welfare.pyplugin.PyModuleExecutor;
 import it.eng.is3lab.animal_welfare.pyplugin.RFConfigurator;
 
 @Path("/v1")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON+";charset=UTF-8")
+@Produces(MediaType.APPLICATION_JSON+";charset=UTF-8")
 public class AWServiceEndpoints implements AWService {
 	private static final Logger log = LogManager.getLogger(AWServiceEndpoints.class);
 

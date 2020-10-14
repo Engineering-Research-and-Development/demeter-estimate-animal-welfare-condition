@@ -169,9 +169,9 @@ public class PyModuleExecutor {
         		log.error("Output data is empty! An error occured while executing python module."
         				+ "Check the Random forest log for more info.");
         		JSONObject err = new JSONObject();
-        		err.put("Status", "Error");
+        		err.put("Code", "2");
         		err.put("Type", "Random forest module error");
-        		err.put("Description", "An error occured while processing the data.");
+        		err.put("Description", "An error occured while processing the data for "+operation+" task!");
         		jsonDataResult = err.toString();
         		return jsonDataResult;
         	}

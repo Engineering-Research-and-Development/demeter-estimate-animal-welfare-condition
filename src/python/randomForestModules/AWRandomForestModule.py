@@ -376,7 +376,7 @@ class AnimalWelfareRandomForest:
                 else :
                     self.myLog.writeMessage('Error! Folder '+ModelFolderPath+' not found!',"ERROR",functionName)
                     self.myLog.writeMessage('Sending error message ...',"DEBUG",functionName)
-                    errorData = {"Status": "Error",
+                    errorData = {"Code": "2",
                                  "Type" : "Models directory not found",
                                  "Description": "The models directory is missing. Please execute the training first."}
                     jsonResult = json.dumps(errorData, indent=4, sort_keys=False)
@@ -465,7 +465,7 @@ class AnimalWelfareRandomForest:
                     if len(existingfiles) < 1 :
                         self.myLog.writeMessage('Error! The folder is empty!',"ERROR",functionName)
                         self.myLog.writeMessage('Sending error message ...',"DEBUG",functionName)
-                        errorData = {"Status": "Error",
+                        errorData = {"Code": "2",
                                      "Type" : "No models saved",
                                      "Description": "There are no models saved. Please execute the training first."}
                         jsonResult = json.dumps(errorData, indent=4, sort_keys=False)
@@ -475,7 +475,7 @@ class AnimalWelfareRandomForest:
                         self.myLog.writeMessage('Error! Model name not found!',"ERROR",functionName)
                         self.myLog.writeMessage('Found '+str(len(filesNames))+' models names:'+ str(filesNames),"ERROR",functionName)
                         self.myLog.writeMessage('Sending error message ...',"DEBUG",functionName)
-                        errorData = {"Status": "Error",
+                        errorData = {"Code": "2",
                                      "Type" : "Models not found",
                                      "Description": "Models not found for the animal type: "+PrefixModel}
                         jsonResult = json.dumps(errorData, indent=4, sort_keys=False)

@@ -15,6 +15,7 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 * [**Features**](#features)
 * [**Endpoints**](#endpoints)
 * [**How to use**](#how-to-use)
+* [**Important Notes**](#important-notes)
 * [**Troubleshoot**](#troubleshoot)
 * [**Developers**](#developers)
 * [**Status**](#status)
@@ -61,9 +62,51 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 * Tomcat 7
 
 ## Setup
-In order to install the module, Docker is required.
 
-1. a
+### Pull the image
+	
+`docker pull demeterengteam/estimate-animal-welfare-condition:candidate`
+
+### Run the application
+
+It's possible to run the application using `docker run` or `docker-compose`
+
+### Docker run
+
+`docker run -p 9180:8080 demeterengteam/estimate-animal-welfare-condition:candidate`
+
+Set the preferred port to use instead of 9180.
+
+### Docker-compose
+
+Create a **docker-compose.yml** file into a folder.
+
+*docker-compose.yml content:*
+
+```
+version: '3'
+
+services:
+    animalwelfare:
+        image: demeterengteam/estimate-animal-welfare-condition:candidate
+        ports:
+          - '${HOST_PORT}:8080'
+```
+
+Create a **.env** file into the same folder of the above docker-compose:
+
+*.env content:*
+```
+HOST_PORT=9180
+```
+
+Set **HOST_PORT** value to the preferred port to use instead of **9180**.
+
+First run the command `docker-compose up` only for the very first time.
+
+Then simply run `docker-compose start` to start the application and `docker-compose stop` to stop it.
+
+Once started open any REST client (i.e. Postman) and send requests to the application endpoints.
 
 ## Features
 
@@ -75,8 +118,9 @@ Return an object with the _training result_ that will show all the test records 
 Receive a dataset of _prediction features_ as input to perform predictions and return an object with the _prediction result_. 
 
 ## Endpoints
+
 The base URL is composed like:
-http://[HOST]:[PORT]/EstimateAnimalWelfareConditionModule/ENDPOINT
+`http://[HOST]:[HOST_PORT]/EstimateAnimalWelfareConditionModule/ENDPOINT`
 
 Headers settings:
 
@@ -87,31 +131,44 @@ Headers settings:
 
 Endpoint informations:
 
-| URL                             | Type     | Used for                                                             | Input                                  | Output                                                |
-| :------------------------------ | :------: | :------------------------------------------------------------------- | :------------------------------------- | :---------------------------------------------------- |
-| **/v1/animalWelfareTraininig**  | **POST** | Train the algorithm, calculate the metrics and store the result data | Json data with actual health condition | A simple message with info about the process          |
-| **/v1/animalWelfareTraininig**  | **GET**  | Retrieve the training result data that was stored                    |                                        | Json with test predicted health condition and metrics |
-| **/v1/animalWelfarePrediction** | **POST** | Estimate the health condition and store the result data              | Json with data to be processed         | A simple message with info about the process          |
-| **/v1/animalWelfarePrediction** | **GET**  | Retrieve the prediction result data that was stored                  |                                        | Json with predicted health condition                  |
+| URL                           | Type     | Used for                                                             | Input                                  | Output                                                |
+| :---------------------------- | :------: | :------------------------------------------------------------------- | :------------------------------------- | :---------------------------------------------------- |
+| `/v1/animalWelfareTraininig`  | **POST** | Train the algorithm, calculate the metrics and store the result data | Json data with actual health condition | A simple message with info about the process          |
+| `/v1/animalWelfareTraininig`  | **GET**  | Retrieve the training result data that was stored                    |                                        | Json with test predicted health condition and metrics |
+| `/v1/animalWelfarePrediction` | **POST** | Estimate the health condition and store the result data              | Json with data to be processed         | A simple message with info about the process          |
+| `/v1/animalWelfarePrediction` | **GET**  | Retrieve the prediction result data that was stored                  |                                        | Json with predicted health condition                  |
 
-The **/v1/animalWelfareTraininig** endpoint can be used also to change the **random state** and **estimators** parameters of the algorithm.
+The `/v1/animalWelfareTraininig` endpoint can be used also to change the **random state** and **estimators** parameters of the algorithm.
 To accomplish that, just add the following path parameters to the URL:
 
-* **/randomstate/value**
+* `/randomstate/value`
 
-* **/estimators/value**	
+* `/estimators/value`	
 
 Both values must be **integers** numbers.
 
 For instance: 
-**http://localhost:9080/EstimateAnimalWelfareConditionModule/v1/animalWelfareTraining/randomstate/42/estimators/100**
+**http://localhost:9180/EstimateAnimalWelfareConditionModule/v1/animalWelfareTraining/randomstate/42/estimators/100**
 This endpoint will first change the values of random state and estimators parameters and then execute the training.
-	
+
 ## How to use
 **TO DO**
 
+## Important Notes
+
+The application image don't contains any training data model preloaded, so the first request to execute
+must be a training one. That will create the models needed for the prediction tasks.
+Isn't necessary to execute another training on next use of the application except for the purpose of imporve training accuracy.
+
 ## Troubleshoot
-**TO DO**
+
+### Errors
+The service provide error messages as response and write the details into logs.
+There are two different error codes that are useful to identify where the error occured:
+
+* **Code: 1**   - The error occured within the java classes
+* **Code: 2**   - The error occured within the python modules
+
 
 ## Developers
 
