@@ -71,13 +71,13 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 
 It's possible to run the application using `docker run` or `docker-compose`
 
-### Docker run
+#### Docker run
 
 `docker run -p 9180:8080 demeterengteam/estimate-animal-welfare-condition:candidate`
 
 Set the preferred port to use instead of 9180.
 
-### Docker-compose
+#### Docker-compose
 
 Create a **docker-compose.yml** file into a folder.
 
@@ -158,7 +158,7 @@ This endpoint will first change the values of random state and estimators parame
 
 The application image don't contains any training data model preloaded, so the first request to execute
 must be a training one. That will create the models needed for the prediction tasks.
-Isn't necessary to execute another training on next use of the application except for the purpose of imporve training accuracy.
+Isn't necessary to execute another training on next use of the application except for the purpose of improve training accuracy.
 
 ## Troubleshoot
 
@@ -168,7 +168,6 @@ There are two different error codes that are useful to identify where the error 
 
 * **Code: 1**   - The error occured within the java classes
 * **Code: 2**   - The error occured within the python modules
-
 
 ## Developers
 
