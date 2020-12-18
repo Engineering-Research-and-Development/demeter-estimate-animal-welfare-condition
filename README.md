@@ -15,6 +15,7 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 * [**Features**](#features)
 * [**Endpoints**](#endpoints)
 * [**How to use**](#how-to-use)
+* [**Important Notes**](#important-notes)
 * [**Troubleshoot**](#troubleshoot)
 * [**Developers**](#developers)
 * [**Status**](#status)
@@ -24,17 +25,19 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 
 | Description                                      | Language | Version          |
 | :----------------------------------------------  | :------: | :--------------: |
-| [Java SE Development Kit 8][1]                   | Java     | 1.8.0_251        |
-| [Python 3][2]                                    | Python   | 3.8.3            |
+| [Java SE Development Kit 8][1]                   | Java     | 1.8.0_202        |
+| [Python 3][2]                                    | Python   | 3.7.3            |
 | [Apache Maven 3][3]                              |          | 3.6.3            |
 | [Apache Tomcat 7][4]                             |          | 7.0.104          |
-| [Scikit-learn API][5]                            | Python   | 0.23.1           |
-| [JPY API][6]                                     | Java     | 0.10.SNAPSHOT    |
+| [Scikit-learn API][5]                            | Python   | 0.23.2           |
+| [JPY API][6]                                     | Java     | 0.9.0            |
 | [RESTEasy API][7]                                | Java     | 3.12.1.Final     |
 | [Spring Framework][8]                            | Java     | 4.3.3.RELEASE    |
 | [Json][9]                                        |          | 20200518         |
-| [Eclipse IDE for Enterprise Java Developers][10] | Java     | 2020-06 (4.16.0) |
-| [PyDev Python IDE for Eclipse][11]               | Python   | 7.6.0            |
+| [Log4j][10]                                      |          | 2.13.3           |
+| [Eclipse IDE for Enterprise Java Developers][11] | Java     | 2020-06 (4.16.0) |
+| [PyDev Python IDE for Eclipse][12]               | Python   | 7.6.0            |
+| [Docker Desktop Community][13]                   |          | 2.3.0.4 (46911)  |
 
 [1]: https://www.oracle.com/it/java/technologies/javase/javase-jdk8-downloads.html
 [2]: https://www.python.org/downloads/release/python-383/
@@ -45,18 +48,65 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 [7]: https://resteasy.github.io/ 
 [8]: https://spring.io/projects/spring-framework
 [9]: http://www.JSON.org/
-[10]: https://www.eclipse.org/downloads/ 
-[11]: http://www.pydev.org/ 
+[10]: https://logging.apache.org/log4j/2.x/
+[11]: https://www.eclipse.org/downloads/ 
+[12]: http://www.pydev.org/
+[13]: https://www.docker.com/products/docker-desktop
 
 ## Requirements
 
+* Docker
 * Java 1.8
 * Python 3
 * Maven
 * Tomcat 7
 
 ## Setup
-**TO DO**
+
+### Pull the image
+	
+`docker pull demeterengteam/estimate-animal-welfare-condition:candidate`
+
+### Run the application
+
+It's possible to run the application using `docker run` or `docker-compose`
+
+#### Docker run
+
+`docker run -p 9180:8080 demeterengteam/estimate-animal-welfare-condition:candidate`
+
+Set the preferred port to use instead of 9180.
+
+#### Docker-compose
+
+Create a **docker-compose.yml** file into a folder.
+
+*docker-compose.yml content:*
+
+```
+version: '3'
+
+services:
+    animalwelfare:
+        image: demeterengteam/estimate-animal-welfare-condition:candidate
+        ports:
+          - '${HOST_PORT}:8080'
+```
+
+Create a **.env** file into the same folder of the above docker-compose:
+
+*.env content:*
+```
+HOST_PORT=9180
+```
+
+Set **HOST_PORT** value to the preferred port to use instead of **9180**.
+
+First run the command `docker-compose up` only for the very first time.
+
+Then simply run `docker-compose start` to start the application and `docker-compose stop` to stop it.
+
+Once started open any REST client (i.e. Postman) and send requests to the application endpoints.
 
 ## Features
 
@@ -69,16 +119,53 @@ Receive a dataset of _prediction features_ as input to perform predictions and r
 
 ## Endpoints
 
-| URL                            | Type     | Used for                                         | Input                                | Output                                                  |
-| :----------------------------- | :------: | :----------------------------------------------- | :----------------------------------- | :------------------------------------------------------ |
-| **/animalWelfare/Traininig**   | **POST** | Train the algorithm and calculate the metrics    | Dataset with actual health condition | Object with test predicted health condition and metrics |
-| **/animalWelfare/Predictions** | **POST** | Estimate the health condition                    | Dataset with data to be processed    | Object with predicted health condition                  |
+The base URL is composed like:
+`http://[HOST]:[HOST_PORT]/EstimateAnimalWelfareConditionModule/ENDPOINT`
 
+Headers settings:
+
+| Key          | Value            |
+| :----------- | :--------------- |
+| Content-Type | application/json |
+| Accept       | application/json |
+
+Endpoint informations:
+
+| URL                           | Type    | Used for                                                            | Input | Output                                   |
+| :---------------------------- | :-----: | :------------------------------------------------------------------ | :---- | :--------------------------------------- |
+| `/v1/animalWelfareTraininig`  | **GET** | Train the algorithm, calculate the metrics and send the result data |       | AIM Json output data result with metrics |
+| `/v1/animalWelfarePrediction` | **GET** | Estimate the health condition and send the result data              |       | AIM Json output data result              |
+<!--
+The `/v1/animalWelfareTraininig` endpoint can be used also to change the **random state** and **estimators** parameters of the algorithm.
+To accomplish that, just add the following path parameters to the URL:
+
+* `/randomstate/value`
+
+* `/estimators/value`	
+
+Both values must be **integers** numbers.
+
+For instance: 
+**http://localhost:9180/EstimateAnimalWelfareConditionModule/v1/animalWelfareTraining/randomstate/42/estimators/100**
+This endpoint will first change the values of random state and estimators parameters and then execute the training.
+-->
 ## How to use
 **TO DO**
 
+## Important Notes
+
+The application image don't contains any training data model preloaded, so the first request to execute
+must be a training one. That will create the models needed for the prediction tasks.
+Isn't necessary to execute another training on next use of the application except for the purpose of improve training accuracy.
+
 ## Troubleshoot
-**TO DO**
+
+### Errors
+The service provide error messages as response and write the details into logs.
+There are two different error codes that are useful to identify where the error occured:
+
+* **Code: 1**   - The error occured within the java classes
+* **Code: 2**   - The error occured within the python modules
 
 ## Developers
 
