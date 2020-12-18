@@ -17,7 +17,7 @@
 
 package it.eng.is3lab.animal_welfare.service;
 
-public class Result {
+public class AWResult {
 	private boolean result;
 	private String errorCode;
 	private String errorDesc;

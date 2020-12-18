@@ -25,7 +25,7 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 
 | Description                                      | Language | Version          |
 | :----------------------------------------------  | :------: | :--------------: |
-| [Java SE Development Kit 8][1]                   | Java     | 1.8.0_251        |
+| [Java SE Development Kit 8][1]                   | Java     | 1.8.0_202        |
 | [Python 3][2]                                    | Python   | 3.7.3            |
 | [Apache Maven 3][3]                              |          | 3.6.3            |
 | [Apache Tomcat 7][4]                             |          | 7.0.104          |
@@ -131,13 +131,11 @@ Headers settings:
 
 Endpoint informations:
 
-| URL                           | Type     | Used for                                                             | Input                                  | Output                                                |
-| :---------------------------- | :------: | :------------------------------------------------------------------- | :------------------------------------- | :---------------------------------------------------- |
-| `/v1/animalWelfareTraininig`  | **POST** | Train the algorithm, calculate the metrics and store the result data | Json data with actual health condition | A simple message with info about the process          |
-| `/v1/animalWelfareTraininig`  | **GET**  | Retrieve the training result data that was stored                    |                                        | Json with test predicted health condition and metrics |
-| `/v1/animalWelfarePrediction` | **POST** | Estimate the health condition and store the result data              | Json with data to be processed         | A simple message with info about the process          |
-| `/v1/animalWelfarePrediction` | **GET**  | Retrieve the prediction result data that was stored                  |                                        | Json with predicted health condition                  |
-
+| URL                           | Type    | Used for                                                            | Input | Output                                   |
+| :---------------------------- | :-----: | :------------------------------------------------------------------ | :---- | :--------------------------------------- |
+| `/v1/animalWelfareTraininig`  | **GET** | Train the algorithm, calculate the metrics and send the result data |       | AIM Json output data result with metrics |
+| `/v1/animalWelfarePrediction` | **GET** | Estimate the health condition and send the result data              |       | AIM Json output data result              |
+<!--
 The `/v1/animalWelfareTraininig` endpoint can be used also to change the **random state** and **estimators** parameters of the algorithm.
 To accomplish that, just add the following path parameters to the URL:
 
@@ -150,7 +148,7 @@ Both values must be **integers** numbers.
 For instance: 
 **http://localhost:9180/EstimateAnimalWelfareConditionModule/v1/animalWelfareTraining/randomstate/42/estimators/100**
 This endpoint will first change the values of random state and estimators parameters and then execute the training.
-
+-->
 ## How to use
 **TO DO**
 

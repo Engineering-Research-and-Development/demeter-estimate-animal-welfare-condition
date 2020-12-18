@@ -3,7 +3,7 @@
  * 
  * Author: Luigi di Corrado
  * Mail: luigi.dicorrado@eng.it
- * Date: 09/10/2020
+ * Date: 17/12/2020
  * Company: Engineering Ingegneria Informatica S.p.A.
  * 
  * Define all the process to configure and use the python interpreter
@@ -31,7 +31,7 @@
  * 
  * Method      : executeFunction
  * 
- * Description : Sends the jsonData string to the training or prediction function 
+ * Description : Sends the AIM traslator URL string to the training or prediction function 
  * 				 of the RandomForest class defined inside the RandomForestModule.
  * 				 The value of "operation" var is used to choose which function execute:
  * 					- "Training" - Execute training function
@@ -39,7 +39,7 @@
  * 				 If the output data received from python is not empty, 
  *               then return the output data, else build a JsonObject containing an error.
  * 
- * Parameters  : String jsonData    - Contains the json string with input data
+ * Parameters  : String url         - Contains the AIM traslator endpoint to request AIM data
  * 				 String operation   - Used to choose which function execute
  * 
  * Return      : String jsonDataResult
@@ -126,7 +126,7 @@ public class PyModuleExecutor {
         }
 	}
 	
-	public String executeFunction(String jsonData, String operation) {
+	public String executeFunction(String url, String operation) {
 		String jsonDataResult = "";
 		try {
 			initInterpreter();
@@ -151,11 +151,11 @@ public class PyModuleExecutor {
 	            	log.debug("TRAINING: Executing training function.");
 	            	int rs = rfConf.getRandomState();
 	            	int est = rfConf.getEstimators();
-	            	jsonDataResult = rfPlugIn.execRFTraining(jsonData,rs,est);
+	            	jsonDataResult = rfPlugIn.execRFTraining(url,rs,est);
 	                break; 
 	            case "Prediction": 
 	            	log.debug("PREDICTION: Executing prediction function.");
-	            	jsonDataResult = rfPlugIn.execRFPrediction(jsonData);
+	            	jsonDataResult = rfPlugIn.execRFPrediction(url);
 	            	break;
 	        }
 		} catch (Exception e) {
@@ -179,5 +179,4 @@ public class PyModuleExecutor {
 		log.debug("Sending output data.");
 		return jsonDataResult;
 	}
-
 }

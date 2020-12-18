@@ -29,14 +29,6 @@
             <artifactId>resteasy-jackson-provider</artifactId>
             <version>${resteasy.version}</version>
         </dependency>
-        <!-- Set up local JPY 
-        <dependency>
-            <groupId>org.jpy</groupId>
-            <artifactId>jpy</artifactId>
-            <version>0.10-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/luidicorra/Documents/jpy/build/lib.win-amd64-3.8/jpy-0.10.0-SNAPSHOT.jar</systemPath>
-        </dependency>-->
         <!-- Set up springframework -->
         <dependency>
             <groupId>org.springframework</groupId>

@@ -3,7 +3,7 @@ Estimate Animal Condition Module - Random Forest Training/Test and Prediction
 
 Author: Luigi di Corrado
 Mail: luigi.dicorrado@eng.it
-Date: 09/10/2020
+Date: 17/12/2020
 Company: Engineering Ingegneria Informatica S.p.A.
 
 Introduction : This module is used to perform the training of the Random Forest algorithm,
@@ -48,37 +48,45 @@ Return       : float TP
 
 
 
+Function     : getDataFromTraslator
+
+Description  : Retrieve the input data in AIM format from AIM Traslator service
+               
+Parameters   : str     url      AIM Traslator endpoint URL
+               
+Return       : dataset dataframe
+
+
+
 Function     : execRFTraining
 
-Description  : Converts the JSON input into a dataframe object, then process the data to fit the relative
+Description  : Converts the AIM input into a dataframe object, then process the data to fit the relative
                hillness and start the training phase for Random Forest algorithm.
                The data is splitted using 80% of the rows for Training and 20% for Testing.
                The random state "rs" argument is used to provide randomic rows while splitting the data.
                Once the training is complete a test prediction is executed on the dedicated rows and the
                models are saved into the configured folder.
                The metrics are calculated using accuracy_score, precision_score and measure functions.
-               All the tested data and metrics are returned as output using JSON.
-               The JSON output contains the following roots:
-                   - animalData        Contains data about animal condition
-                   - metricsData       Contains all the metrics data of the algorithm
+               All the tested data and metrics are put together into the same Dataset
+               and next converted into a CSV String and sent to AIM Traslator service.
+               The response received will contain the AIM format of the output.
                
-Parameters   : str   JsonData     - String that contains the JSON data to be processed
+Parameters   : str   url                - String that contains AIM Traslator endpoint URL
                int   randomState        - Random state value for test phase, it choose random rows
                int   estimatorsNumbers  - Numbers of estimators to use on training phase
                
-Return       : str   jsonResult   - String that contains all the JSON data to output
+Return       : str   jsonResult   - String that contains all the AIM data to output
 
 
 
 Function     : execRFPrediction
 
-Description  : Converts the JSON input into a dataframe object, then process the data to fit the relative
+Description  : Converts the AIM input into a dataframe object, then process the data to fit the relative
                hillness and load the models before start the prediction using Random Forest.
-               At the end of the process, the output data is converted into JSON.
-               The JSON output contains the following roots:
-                   - animalData        Contains data about animal condition
+               At the end of the process, the output data is converted into a CSV String and sent 
+               to AIM Traslator service.
                
-Parameters   : str   JsonData     - String that contains the JSON data to be processed
+Parameters   : str   url          - String that contains AIM Traslator endpoint URL
                
 Return       : str   jsonResult   - String that contains all the JSON data to output
 
@@ -91,6 +99,8 @@ import sys
 import os
 import json
 import configparser
+import requests
+from decimal import Decimal
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -128,8 +138,104 @@ class AnimalWelfareRandomForest:
         TPR = round((TP / (TP + FN)) * 100, 2)
 
         return(TP, FP, TN, FN, FPR, TPR)
-  
-    def execRFTraining(self, JsonData, randomState, estimatorsNumbers):
+      
+    def getDataFromTraslator(self, url):
+        functionName = sys._getframe().f_code.co_name
+        self.myLog.writeMessage('Send request to: '+url,"DEBUG",functionName)
+        resp = requests.post(url)
+        self.myLog.writeMessage('Response received!',"DEBUG",functionName)
+        try:
+          # Json validation on loading
+          myAIM = json.loads(resp.text)
+        except:
+          self.myLog.writeMessage('Exception! Invalid Json ...', "ERROR",functionName)
+          self.myLog.writeMessage('Response BODY Content: '+resp.text, "ERROR",functionName)
+          raise
+        myGraph = myAIM['@graph']
+        cols = ['Index','Date','Pedometer', 'Cow', 'MID', 'Lactations', 'Daily Production', 'Average Daily Production',
+               'Daily Fat', 'Daily Proteins', 'Daily Fat/Proteins', 'Conduttivity 1', 'Conduttivity 2', 'Conduttivity 3', 'Activity 1', 
+               'Activity 2', 'Activity 3', 'Total Daily Lying', 'ActualLameness', 'PredictedLameness',
+               'ActualMastitis', 'PredictedMastitis', 'ActualKetosis', 'PredictedKetosis']
+        rows = []
+        
+        # Start the count at 1, because the @graph[0] element refer to metrics data storage.
+        count = 1
+        while count < len(myGraph):
+            cow = myGraph[count]['livestockNumber']
+            index = myGraph[count+1]['indentifier']
+            date = myGraph[count+2]['resultTime']
+            pedometer = myGraph[count+5]['hasResult']['numericValue']
+            mid = myGraph[count+6]['hasResult']['numericValue']
+            lactations = myGraph[count+7]['hasResult']['numericValue']
+            dailyprod = myGraph[count+8]['hasResult']['numericValue']
+            averagedp = myGraph[count+9]['hasResult']['numericValue']
+            dailyfat = myGraph[count+10]['hasResult']['numericValue']
+            dailyproteins = myGraph[count+11]['hasResult']['numericValue']
+            dailyfatproteins = myGraph[count+12]['hasResult']['numericValue']
+            tdl = myGraph[count+13]['hasResult']['numericValue']
+            
+            if '#healthStatus-Healthy' in myGraph[count+14]['hasResult']['@id']:
+                actuallameness = 'Healthy'
+            elif '#healthStatus-Sick' in myGraph[count+14]['hasResult']['@id']:
+                actuallameness = 'Sick'
+            else:
+                actuallameness = ''
+                
+            if '#healthStatus-Healthy' in myGraph[count+15]['hasResult']['@id']:
+                predictedlameness = 'Healthy'
+            elif '#healthStatus-Sick' in myGraph[count+15]['hasResult']['@id']:
+                predictedlameness = 'Sick'
+            else:
+                predictedlameness = ''
+            
+            if '#healthStatus-Healthy' in myGraph[count+16]['hasResult']['@id']:
+                actualketosis = 'Healthy'
+            elif '#healthStatus-Sick' in myGraph[count+16]['hasResult']['@id']:
+                actualketosis = 'Sick'
+            else:
+                actualketosis = ''
+                
+            if '#healthStatus-Healthy' in myGraph[count+17]['hasResult']['@id']:
+                predictedketosis = 'Healthy'
+            elif '#healthStatus-Sick' in myGraph[count+17]['hasResult']['@id']:
+                predictedketosis = 'Sick'
+            else:
+                predictedketosis = ''
+            
+            if '#healthStatus-Healthy' in myGraph[count+18]['hasResult']['@id']:
+                actualmastitis = 'Healthy'
+            elif '#healthStatus-Sick' in myGraph[count+18]['hasResult']['@id']:
+                actualmastitis = 'Sick'
+            else:
+                actualmastitis = ''
+            
+            if '#healthStatus-Healthy' in myGraph[count+19]['hasResult']['@id']:
+                predictedmastitis = 'Healthy'
+            elif '#healthStatus-Sick' in myGraph[count+19]['hasResult']['@id']:
+                predictedmastitis = 'Sick'
+            else:
+                predictedmastitis = ''
+            
+            cond1 = myGraph[count+20]['hasResult']['numericValue']
+            cond2 = myGraph[count+21]['hasResult']['numericValue']
+            cond3 = myGraph[count+22]['hasResult']['numericValue']
+            act1 = myGraph[count+23]['hasResult']['numericValue']
+            act2 = myGraph[count+24]['hasResult']['numericValue']
+            act3 = myGraph[count+25]['hasResult']['numericValue']
+        
+            rows.append([index, date, pedometer, cow, mid, lactations, dailyprod, averagedp, dailyfat, dailyproteins, dailyfatproteins,
+                         cond1, cond2, cond3, act1, act2, act3, tdl, actuallameness, predictedlameness,
+                        actualmastitis, predictedmastitis, actualketosis, predictedketosis])
+            
+            # Each animal takes 26 elements to store each data that will be used by Random Forest
+            count += 26 
+        
+        dataframe = pd.DataFrame(rows, columns=cols)
+        dataframe = dataframe.set_index('Index')
+        dataframe = dataframe.apply(pd.to_numeric,errors='ignore')
+        return dataframe
+      
+    def execRFTraining(self, url, randomState, estimatorsNumbers):
         # GET FUNCTION NAME
         functionName = sys._getframe().f_code.co_name       
         # Estimate Animal Welfare Condition - Training and Testing
@@ -147,6 +253,11 @@ class AnimalWelfareRandomForest:
                 #estimators = int(config.get('PyRandomForest', 'animalwelfare.randomForest.trainingSettings.estimators'))
                 estimators = estimatorsNumbers
                 self.myLog.writeMessage("Estimators set at: "+str(estimators),"DEBUG",functionName)
+                DataFolderPath = self.config.get('PyRandomForest', 'animalwelfare.randomForest.commonSettings.datafilePath')
+                csvFileName = self.config.get('PyRandomForest', 'animalwelfare.randomForest.commonSettings.csvFileName')
+                
+                # Removed from configuration file.
+                #metricsFileName = self.config.get('PyRandomForest', 'animalwelfare.randomForest.commonSettings.trainingMetricsFileName')
                 
                 # MODEL SETTINGS
                 ModelFolderPath = self.config.get('PyRandomForest', 'animalwelfare.randomForest.commonSettings.modelfilePath')
@@ -171,9 +282,10 @@ class AnimalWelfareRandomForest:
 
                 # Dataset preparation
                 self.myLog.writeMessage('Loading dataset ...',"DEBUG",functionName)
-                JsonObj = json.loads(JsonData)
-                dataframe = pd.DataFrame(JsonObj)
-                dataframe = dataframe.set_index('Index')
+                #JsonObj = json.loads(JsonData)
+                #dataframe = pd.DataFrame(JsonObj)
+                dataframe= self.getDataFromTraslator(url)
+                
                 cols = ['Total Daily Lying', 'ActualLameness', 'Daily Fat', 'Daily Proteins', 'Daily Fat/Proteins', 'ActualKetosis',
                         'Conduttivity 1', 'Conduttivity 2', 'Conduttivity 3', 'ActualMastitis']
                 dataset = dataframe[cols]
@@ -275,9 +387,9 @@ class AnimalWelfareRandomForest:
                 Ketosis_TP, Ketosis_FP, Ketosis_TN, Ketosis_FN, Ketosis_FPR, Ketosis_TPR = self.measure(Ketosis_y_test, Ketosis_y_pred)
                 Mastitis_TP, Mastitis_FP, Mastitis_TN, Mastitis_FN, Mastitis_FPR, Mastitis_TPR = self.measure(Mastitis_y_test, Mastitis_y_pred)
 
-                metricsDict = {'LAMENESS_TRUE_POSITIVE_RATE': [Lameness_TPR], 'LAMENESS_FALSE_POSITIVE_RATE': [Lameness_FPR], 'LAMENESS_PRECISION': [LamenessPrecision], 'LAMENESS_ACCURACY': [LamenessAccuracy],
-                               'MASTITIS_TRUE_POSITIVE_RATE': [Mastitis_TPR], 'MASTITIS_FALSE_POSITIVE_RATE': [Mastitis_FPR], 'MASTITIS_PRECISION': [MastitisPrecision], 'MASTITIS_ACCURACY': [MastitisAccuracy],
-                               'KETOSIS_TRUE_POSITIVE_RATE': [Ketosis_TPR], 'KETOSIS_FALSE_POSITIVE_RATE': [Ketosis_FPR], 'KETOSIS_PRECISION': [KetosisPrecision], 'KETOSIS_ACCURACY': [KetosisAccuracy]}
+                metricsDict = {'lamenessTruePositiveRate': [Lameness_TPR], 'lamenessFalsePositiveRate': [Lameness_FPR], 'lamenessPrecision': [LamenessPrecision], 'lamenessAccuracy': [LamenessAccuracy],
+                               'mastitisTruePositiveRate': [Mastitis_TPR], 'mastitisFalsePositiveRate': [Mastitis_FPR], 'mastitisPrecision': [MastitisPrecision], 'mastitisAccuracy': [MastitisAccuracy],
+                               'ketosisTruePositiveRate': [Ketosis_TPR], 'ketosisFalsePositiveRate': [Ketosis_FPR], 'ketosisPrecision': [KetosisPrecision], 'ketosisAccuracy': [KetosisAccuracy]}
                 self.myLog.writeMessage('True positive rate and false positive rate calculated!',"DEBUG",functionName)
                 dsMetrics = pd.DataFrame(metricsDict)
                 self.myLog.writeMessage('Metrics calculations completed!',"DEBUG",functionName)
@@ -315,27 +427,53 @@ class AnimalWelfareRandomForest:
                 #dsPredictions['Date'] = pd.to_datetime(dsPredictions['Date'], format='%Y-%m-%d').dt.strftime('%d/%m/%Y')
                 dsPredictions = dsPredictions.reset_index()
                 self.myLog.writeMessage('Output dataset preparation completed!', "DEBUG",functionName)
+                
+                # Convert dataset predictions to AIM using traslator service
+                self.myLog.writeMessage('Converting output datasets to AIM ...',"DEBUG",functionName)
 
+                # Convert dataset predictions to CSV
+                self.myLog.writeMessage('Creating CSV file: '+DataFolderPath+'/'+csvFileName,"DEBUG",functionName)
+                dsPredictions = pd.concat([dsPredictions,dsMetrics],axis=1, sort=False)
+                csvDataset = dsPredictions.to_csv(DataFolderPath+'/'+csvFileName, sep=';', index=False)
+                
                 # Convert dataset predictions to json using records orientation
-                self.myLog.writeMessage('Converting output datasets to JSON ...',"DEBUG",functionName)
-                jsonDataset = dsPredictions.to_json(orient='records')
                 jsonMetrics = dsMetrics.to_json(orient='records')
                 self.myLog.writeMessage('Conversion completed!',"DEBUG",functionName)  
+                
+                self.myLog.writeMessage('Converting CSV to String...',"DEBUG",functionName) 
+                with open(DataFolderPath+'/'+csvFileName) as csvFile:
+                  csvContent = csvFile.read()
+                self.myLog.writeMessage('Conversion completed!',"DEBUG",functionName)
+                
+                self.myLog.writeMessage('Send request to: '+url,"DEBUG",functionName)
+                resp = requests.post(url,data = csvContent)
+                jsonDataset = resp.text
 
+                self.myLog.writeMessage('Processing JSON output ...',"DEBUG",functionName)
                 # Decode the json data created to insert a custom root element
-                self.myLog.writeMessage('Adding roots to JSON ...',"DEBUG",functionName)
+                #self.myLog.writeMessage('Adding roots to JSON ...',"DEBUG",functionName)
                 jsonDataset_decoded = json.loads(jsonDataset)
-                jsonDataset_decoded = {'animalData': jsonDataset_decoded}
-                jsonMetrics_decoded = json.loads(jsonMetrics)
-                jsonMetrics_decoded = {'metricsData': jsonMetrics_decoded}
-                self.myLog.writeMessage('Roots successfully added!',"DEBUG",functionName)
+                #jsonDataset_decoded = {'animalData': jsonDataset_decoded}
+                #jsonMetrics_decoded = json.loads(jsonMetrics)
+                #jsonMetrics_decoded = {'metricsData': jsonMetrics_decoded}
+                #self.myLog.writeMessage('Roots successfully added!',"DEBUG",functionName)
 
                 # Decode json that contains metrics element and update the prediction json
-                self.myLog.writeMessage('Processing JSON output ...',"DEBUG",functionName)
-                jsonDataset_decoded.update(jsonMetrics_decoded)
+                #self.myLog.writeMessage('Processing JSON output ...',"DEBUG",functionName)
+                #jsonDataset_decoded.update(jsonMetrics_decoded)
+                #with open(DataFolderPath+'/'+metricsFileName, 'w') as outfile:
+                #  json.dump(jsonMetrics_decoded, outfile)
 
                 jsonResult = json.dumps(jsonDataset_decoded, indent=4, sort_keys=False)
                 self.myLog.writeMessage('JSON output successfully processed!',"DEBUG",functionName)
+                
+                self.myLog.writeMessage('Removing useless files ...',"DEBUG",functionName)
+                if os.path.exists(DataFolderPath+'/'+csvFileName):
+                  os.remove(DataFolderPath+'/'+csvFileName)
+                else:
+                  self.myLog.writeMessage('The file '+DataFolderPath+'/'+csvFileName+' does not exists!',"DEBUG",functionName)
+                self.myLog.writeMessage('Removing useless files successfully completed!',"DEBUG",functionName)
+                
                 self.myLog.writeMessage('Estimate Animal Welfare Condition training and test completed!',"INFO",functionName)
                 self.myLog.writeMessage('==============================================================',"INFO",functionName)
                 return jsonResult
@@ -343,7 +481,7 @@ class AnimalWelfareRandomForest:
                 self.myLog.writeMessage('An exception occured!', "ERROR",functionName)
                 raise
                 
-    def execRFPrediction(self, JsonData):    
+    def execRFPrediction(self, url):    
         # GET FUNCTION NAME
         functionName = sys._getframe().f_code.co_name
         
@@ -364,7 +502,10 @@ class AnimalWelfareRandomForest:
                 LamenessModelName = PrefixModel + 'LamenessModel'
                 KetosisModelName = PrefixModel + 'KetosisModel'
                 MastitisModelName = PrefixModel + 'MastitisModel'
-                
+                DataFolderPath = self.config.get('PyRandomForest', 'animalwelfare.randomForest.commonSettings.datafilePath')
+                csvFileName = self.config.get('PyRandomForest', 'animalwelfare.randomForest.commonSettings.csvFileName')
+
+  
                 self.myLog.writeMessage('Preparing to execute Random Forest Predictions of Estimate Animal Welfare Condition ...',"INFO",functionName)
                 # Estimate Animal Welfare Condition - Prediction
         
@@ -406,9 +547,10 @@ class AnimalWelfareRandomForest:
                 if not(modelsNotExists):
                     # Dataset preparation
                     self.myLog.writeMessage('Loading dataset ...',"DEBUG",functionName)
-                    JsonObj = json.loads(JsonData)
-                    dataframe = pd.DataFrame(JsonObj)
-                    dataframe = dataframe.set_index('Index')
+                    #JsonObj = json.loads(JsonData)
+                    #dataframe = pd.DataFrame(JsonObj)
+                    #dataframe = dataframe.set_index('Index')
+                    dataframe= self.getDataFromTraslator(url)
 
                     LamenessCols = ['Total Daily Lying']
                     KetosisCols = ['Daily Fat', 'Daily Proteins', 'Daily Fat/Proteins']
@@ -443,21 +585,45 @@ class AnimalWelfareRandomForest:
                     dataframe = dataframe.reset_index()
                     self.myLog.writeMessage('Output preparation completed!',"DEBUG",functionName)
                     
+                    # Convert dataset predictions to AIM using traslator service
+                    self.myLog.writeMessage('Converting output datasets to AIM ...',"DEBUG",functionName)
+                    
+                    # Convert dataset predictions to CSV
+                    self.myLog.writeMessage('Creating CSV file: '+DataFolderPath+'/'+csvFileName,"DEBUG",functionName)
+                    csvDataset = dataframe.to_csv(DataFolderPath+'/'+csvFileName, sep=';', index=False)
+                    
+                    self.myLog.writeMessage('Converting CSV to String...',"DEBUG",functionName) 
+                    with open(DataFolderPath+'/'+csvFileName) as csvFile:
+                      csvContent = csvFile.read()
+                    self.myLog.writeMessage('Conversion completed!',"DEBUG",functionName)
+                    
+                    self.myLog.writeMessage('Send request to: '+url,"DEBUG",functionName)
+                    resp = requests.post(url,data = csvContent)
+                    jsonDataset = resp.text
+
                     # Convert dataset predictions to json using records orientation
-                    self.myLog.writeMessage('Converting output dataset to JSON ...',"DEBUG",functionName)
-                    jsonDataset = dataframe.to_json(orient='records')
-                    self.myLog.writeMessage('Conversion completed!',"DEBUG",functionName)  
+                    #self.myLog.writeMessage('Converting output dataset to JSON ...',"DEBUG",functionName)
+                    #jsonDataset = dataframe.to_json(orient='records')
+                    #self.myLog.writeMessage('Conversion completed!',"DEBUG",functionName)  
 
                     # Decode the json data created to insert a custom root element
-                    self.myLog.writeMessage('Adding roots to JSON ...',"DEBUG",functionName)
+                    #self.myLog.writeMessage('Adding roots to JSON ...',"DEBUG",functionName)
                     jsonDataset_decoded = json.loads(jsonDataset)
-                    jsonDataset_decoded = {'animalData': jsonDataset_decoded}
-                    self.myLog.writeMessage('Roots successfully added!',"DEBUG",functionName)
+                    #jsonDataset_decoded = {'animalData': jsonDataset_decoded}
+                    #self.myLog.writeMessage('Roots successfully added!',"DEBUG",functionName)
 
                     # Process JSON output
                     self.myLog.writeMessage('Processing JSON output ...',"DEBUG",functionName)
                     jsonResult = json.dumps(jsonDataset_decoded, indent=4, sort_keys=False)
                     self.myLog.writeMessage('JSON output successfully processed!',"DEBUG",functionName)
+                    
+                    self.myLog.writeMessage('Removing useless files ...',"DEBUG",functionName)
+                    if os.path.exists(DataFolderPath+'/'+csvFileName):
+                      os.remove(DataFolderPath+'/'+csvFileName)
+                    else:
+                      self.myLog.writeMessage('The file '+DataFolderPath+'/'+csvFileName+' does not exists!',"DEBUG",functionName)
+                    self.myLog.writeMessage('Removing useless files successfully completed!',"DEBUG",functionName)
+                    
                     self.myLog.writeMessage('Estimate Animal Welfare Condition predictions completed!',"INFO",functionName)
                     self.myLog.writeMessage('==============================================================',"INFO",functionName)
                     return jsonResult
