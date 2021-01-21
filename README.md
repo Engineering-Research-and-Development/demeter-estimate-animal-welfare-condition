@@ -61,6 +61,14 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 * Maven
 * Tomcat 7
 
+The following components are needed for start using this component:
+
+| Components required                | Description   |
+| :--------------------------------  | :------------ |
+| [pilot4.2-traslator:candidate][14]  | AIM traslator |
+
+[14]: https://hub.docker.com/repository/docker/demeterengteam/pilot4.2-traslator
+
 ## Setup
 
 ### Pull the image
@@ -69,13 +77,15 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 
 ### Run the application
 
-It's possible to run the application using `docker run` or `docker-compose`
+It's possible to run the application using <!--`docker run` or --> `docker-compose`
 
-#### Docker run
+<!--
+### Docker run
 
 `docker run -p 9180:8080 demeterengteam/estimate-animal-welfare-condition:candidate`
 
 Set the preferred port to use instead of 9180.
+-->
 
 #### Docker-compose
 
@@ -91,6 +101,9 @@ services:
         image: demeterengteam/estimate-animal-welfare-condition:candidate
         ports:
           - '${HOST_PORT}:8080'
+		environment: 
+          - AW_AIM_TRASLATOR_PREDICTION_URL=http://${HOST_IP}:${TRASLATOR_SERVICE_HOST_PORT}/demeter-csvManager/rest/traslator/v1/AnimalWelfarePrediction
+          - AW_AIM_TRASLATOR_TRAINING_URL=http://${HOST_IP}:${TRASLATOR_SERVICE_HOST_PORT}/demeter-csvManager/rest/traslator/v1/AnimalWelfareTraining
 ```
 
 Create a **.env** file into the same folder of the above docker-compose:
@@ -98,13 +111,21 @@ Create a **.env** file into the same folder of the above docker-compose:
 *.env content:*
 ```
 HOST_PORT=9180
+HOST_IP=**INSERT HOST IP**
+TRASLATOR_SERVICE_HOST_PORT=**INSERT THE PORT OF THE TRASLATOR COMPONENT*
 ```
 
 Set **HOST_PORT** value to the preferred port to use instead of **9180**.
 
+Set **HOST_IP** value with the correct ip of the host machine.
+
+Set **TRASLATOR_SERVICE_HOST_PORT** value equal to the port used for the traslator service component.
+
 First run the command `docker-compose up` only for the very first time.
 
 Then simply run `docker-compose start` to start the application and `docker-compose stop` to stop it.
+
+Before doing any request, you must upload the data as csv file using the [traslator service][14].
 
 Once started open any REST client (i.e. Postman) and send requests to the application endpoints.
 
