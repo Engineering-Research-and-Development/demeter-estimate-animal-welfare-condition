@@ -5,4 +5,7 @@ services:
         image: demeterengteam/estimate-animal-welfare-condition:candidate
         ports:
           - '${HOST_PORT}:8080'
+        environment: 
+          - AW_AIM_TRASLATOR_PREDICTION_URL=http://${HOST_IP}:${TRASLATOR_SERVICE_HOST_PORT}/demeter-csvManager/rest/traslator/v1/AnimalWelfarePrediction
+          - AW_AIM_TRASLATOR_TRAINING_URL=http://${HOST_IP}:${TRASLATOR_SERVICE_HOST_PORT}/demeter-csvManager/rest/traslator/v1/AnimalWelfareTraining
             
