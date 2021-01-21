@@ -100,18 +100,6 @@ Headers settings:
 | Content-Type | application/json |
 | Accept       | application/json |
 
-## Endpoints
-
-The base URL is composed like:
-`http://[HOST]:[HOST_PORT]/EstimateAnimalWelfareConditionModule/ENDPOINT`
-
-Headers settings:
-
-| Key          | Value            |
-| :----------- | :--------------- |
-| Content-Type | application/json |
-| Accept       | application/json |
-
 Endpoint informations:
 
 | URL                           | Type    | Used for                                                            | Input | Output                                   |
