@@ -104,7 +104,7 @@ public class AWServiceEndpoints implements AWService {
     @GET
     @Path("/animalWelfareTraining")
     @Formatted
-	public Response training() {
+	public synchronized Response training() {
     	AWResult result = new AWResult();
     	try {
     		log.debug("Training endpoint reached!");   		
@@ -125,7 +125,7 @@ public class AWServiceEndpoints implements AWService {
     @GET
     @Path("/animalWelfarePrediction")
     @Formatted
-	public Response prediction() {
+	public synchronized Response prediction() {
     	AWResult result = new AWResult();
     	try {
     		log.debug("Prediction endpoint reached!");

@@ -467,12 +467,12 @@ class AnimalWelfareRandomForest:
                 jsonResult = json.dumps(jsonDataset_decoded, indent=4, sort_keys=False)
                 self.myLog.writeMessage('JSON output successfully processed!',"DEBUG",functionName)
                 
-                self.myLog.writeMessage('Removing useless files ...',"DEBUG",functionName)
-                if os.path.exists(DataFolderPath+'/'+csvFileName):
-                  os.remove(DataFolderPath+'/'+csvFileName)
-                else:
-                  self.myLog.writeMessage('The file '+DataFolderPath+'/'+csvFileName+' does not exists!',"DEBUG",functionName)
-                self.myLog.writeMessage('Removing useless files successfully completed!',"DEBUG",functionName)
+                #self.myLog.writeMessage('Removing useless files ...',"DEBUG",functionName)
+                #if os.path.exists(DataFolderPath+'/'+csvFileName):
+                #  os.remove(DataFolderPath+'/'+csvFileName)
+                #else:
+                #  self.myLog.writeMessage('The file '+DataFolderPath+'/'+csvFileName+' does not exists!',"DEBUG",functionName)
+                #self.myLog.writeMessage('Removing useless files successfully completed!',"DEBUG",functionName)
                 
                 self.myLog.writeMessage('Estimate Animal Welfare Condition training and test completed!',"INFO",functionName)
                 self.myLog.writeMessage('==============================================================',"INFO",functionName)
@@ -617,12 +617,12 @@ class AnimalWelfareRandomForest:
                     jsonResult = json.dumps(jsonDataset_decoded, indent=4, sort_keys=False)
                     self.myLog.writeMessage('JSON output successfully processed!',"DEBUG",functionName)
                     
-                    self.myLog.writeMessage('Removing useless files ...',"DEBUG",functionName)
-                    if os.path.exists(DataFolderPath+'/'+csvFileName):
-                      os.remove(DataFolderPath+'/'+csvFileName)
-                    else:
-                      self.myLog.writeMessage('The file '+DataFolderPath+'/'+csvFileName+' does not exists!',"DEBUG",functionName)
-                    self.myLog.writeMessage('Removing useless files successfully completed!',"DEBUG",functionName)
+                    #self.myLog.writeMessage('Removing useless files ...',"DEBUG",functionName)
+                    #if os.path.exists(DataFolderPath+'/'+csvFileName):
+                    #  os.remove(DataFolderPath+'/'+csvFileName)
+                    #else:
+                    #  self.myLog.writeMessage('The file '+DataFolderPath+'/'+csvFileName+' does not exists!',"DEBUG",functionName)
+                    #self.myLog.writeMessage('Removing useless files successfully completed!',"DEBUG",functionName)
                     
                     self.myLog.writeMessage('Estimate Animal Welfare Condition predictions completed!',"INFO",functionName)
                     self.myLog.writeMessage('==============================================================',"INFO",functionName)
