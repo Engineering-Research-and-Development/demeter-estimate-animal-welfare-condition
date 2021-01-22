@@ -80,7 +80,7 @@ The following components are needed for start using this component:
 It's possible to run the application using <!--`docker run` or --> `docker-compose`
 
 <!--
-### Docker run
+#### Docker run
 
 `docker run -p 9180:8080 demeterengteam/estimate-animal-welfare-condition:candidate`
 
