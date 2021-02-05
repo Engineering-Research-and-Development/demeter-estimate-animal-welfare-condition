@@ -67,7 +67,7 @@ The following components are needed for start using this component:
 | :--------------------------------  | :------------ |
 | [pilot4.2-traslator:candidate][14]  | AIM traslator |
 
-[14]: https://hub.docker.com/repository/docker/demeterengteam/pilot4.2-traslator
+[14]: https://hub.docker.com/r/demeterengteam/pilot4.2-traslator
 
 ## Setup
 
@@ -197,4 +197,4 @@ Project is: _in progress_
 
 ## License
 <!--- If you're not sure which open license to use see https://choosealicense.com/--->
-This project uses the following license: [<license_name>](<link>).
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
