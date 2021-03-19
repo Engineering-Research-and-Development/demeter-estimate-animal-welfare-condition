@@ -164,64 +164,64 @@ class AnimalWelfareRandomForest:
             cow = myGraph[count]['livestockNumber']
             index = myGraph[count+1]['indentifier']
             date = myGraph[count+2]['resultTime']
-            pedometer = myGraph[count+5]['hasResult']['numericValue']
-            mid = myGraph[count+6]['hasResult']['numericValue']
-            lactations = myGraph[count+7]['hasResult']['numericValue']
-            dailyprod = myGraph[count+8]['hasResult']['numericValue']
-            averagedp = myGraph[count+9]['hasResult']['numericValue']
-            dailyfat = myGraph[count+10]['hasResult']['numericValue']
-            dailyproteins = myGraph[count+11]['hasResult']['numericValue']
-            dailyfatproteins = myGraph[count+12]['hasResult']['numericValue']
-            tdl = myGraph[count+13]['hasResult']['numericValue']
+            pedometer = myGraph[count+5]['hasResult'][0]['numericValue']
+            mid = myGraph[count+6]['hasResult'][0]['numericValue']
+            lactations = myGraph[count+7]['hasResult'][0]['numericValue']
+            dailyprod = myGraph[count+8]['hasResult'][0]['numericValue']
+            averagedp = myGraph[count+9]['hasResult'][0]['numericValue']
+            dailyfat = myGraph[count+10]['hasResult'][0]['numericValue']
+            dailyproteins = myGraph[count+11]['hasResult'][0]['numericValue']
+            dailyfatproteins = myGraph[count+12]['hasResult'][0]['numericValue']
+            tdl = myGraph[count+13]['hasResult'][0]['numericValue']
             
-            if '#healthStatus-Healthy' in myGraph[count+14]['hasResult']['@id']:
+            if '#healthStatus-Healthy' in myGraph[count+14]['hasResult']:
                 actuallameness = 'Healthy'
-            elif '#healthStatus-Sick' in myGraph[count+14]['hasResult']['@id']:
+            elif '#healthStatus-Sick' in myGraph[count+14]['hasResult']:
                 actuallameness = 'Sick'
             else:
                 actuallameness = ''
                 
-            if '#healthStatus-Healthy' in myGraph[count+15]['hasResult']['@id']:
+            if '#healthStatus-Healthy' in myGraph[count+15]['hasResult']:
                 predictedlameness = 'Healthy'
-            elif '#healthStatus-Sick' in myGraph[count+15]['hasResult']['@id']:
+            elif '#healthStatus-Sick' in myGraph[count+15]['hasResult']:
                 predictedlameness = 'Sick'
             else:
                 predictedlameness = ''
             
-            if '#healthStatus-Healthy' in myGraph[count+16]['hasResult']['@id']:
+            if '#healthStatus-Healthy' in myGraph[count+16]['hasResult']:
                 actualketosis = 'Healthy'
-            elif '#healthStatus-Sick' in myGraph[count+16]['hasResult']['@id']:
+            elif '#healthStatus-Sick' in myGraph[count+16]['hasResult']:
                 actualketosis = 'Sick'
             else:
                 actualketosis = ''
                 
-            if '#healthStatus-Healthy' in myGraph[count+17]['hasResult']['@id']:
+            if '#healthStatus-Healthy' in myGraph[count+17]['hasResult']:
                 predictedketosis = 'Healthy'
-            elif '#healthStatus-Sick' in myGraph[count+17]['hasResult']['@id']:
+            elif '#healthStatus-Sick' in myGraph[count+17]['hasResult']:
                 predictedketosis = 'Sick'
             else:
                 predictedketosis = ''
             
-            if '#healthStatus-Healthy' in myGraph[count+18]['hasResult']['@id']:
+            if '#healthStatus-Healthy' in myGraph[count+18]['hasResult']:
                 actualmastitis = 'Healthy'
-            elif '#healthStatus-Sick' in myGraph[count+18]['hasResult']['@id']:
+            elif '#healthStatus-Sick' in myGraph[count+18]['hasResult']:
                 actualmastitis = 'Sick'
             else:
                 actualmastitis = ''
             
-            if '#healthStatus-Healthy' in myGraph[count+19]['hasResult']['@id']:
+            if '#healthStatus-Healthy' in myGraph[count+19]['hasResult']:
                 predictedmastitis = 'Healthy'
-            elif '#healthStatus-Sick' in myGraph[count+19]['hasResult']['@id']:
+            elif '#healthStatus-Sick' in myGraph[count+19]['hasResult']:
                 predictedmastitis = 'Sick'
             else:
                 predictedmastitis = ''
             
-            cond1 = myGraph[count+20]['hasResult']['numericValue']
-            cond2 = myGraph[count+21]['hasResult']['numericValue']
-            cond3 = myGraph[count+22]['hasResult']['numericValue']
-            act1 = myGraph[count+23]['hasResult']['numericValue']
-            act2 = myGraph[count+24]['hasResult']['numericValue']
-            act3 = myGraph[count+25]['hasResult']['numericValue']
+            cond1 = myGraph[count+20]['hasResult'][0]['numericValue']
+            cond2 = myGraph[count+21]['hasResult'][0]['numericValue']
+            cond3 = myGraph[count+22]['hasResult'][0]['numericValue']
+            act1 = myGraph[count+23]['hasResult'][0]['numericValue']
+            act2 = myGraph[count+24]['hasResult'][0]['numericValue']
+            act3 = myGraph[count+25]['hasResult'][0]['numericValue']
         
             rows.append([index, date, pedometer, cow, mid, lactations, dailyprod, averagedp, dailyfat, dailyproteins, dailyfatproteins,
                          cond1, cond2, cond3, act1, act2, act3, tdl, actuallameness, predictedlameness,
