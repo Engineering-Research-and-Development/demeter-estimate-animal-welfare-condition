@@ -123,6 +123,8 @@ class AnimalWelfareRandomForest:
         FP = 0
         TN = 0
         FN = 0
+        FPR = 0
+        TPR = 0
 
         for i in range(len(y_predict)): 
             if y_actual[i] == y_predict[i] == 0:
@@ -133,9 +135,10 @@ class AnimalWelfareRandomForest:
                 TN += 1
             if y_predict[i] == 1 and y_actual[i] != y_predict[i]:
                 FN += 1
-
-        FPR = round((FP / (FP + TN)) * 100, 2)
-        TPR = round((TP / (TP + FN)) * 100, 2)
+        if (FP+TN) > 0:
+            FPR = round((FP / (FP + TN)) * 100, 2)
+        if (TP+FN) > 0:
+            TPR = round((TP / (TP + FN)) * 100, 2)
 
         return(TP, FP, TN, FN, FPR, TPR)
       
