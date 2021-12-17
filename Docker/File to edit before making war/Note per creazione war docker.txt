@@ -1,0 +1,5 @@
+Prima di effettuare la build su WAR dell'applicazione da ECLIPSE
+bisogna sostituire il contenuto dei file di configurazione del progetto
+con quello presente in questi file.
+Le modifiche consistono nel cambiare la configurazione dei path di salvataggio
+dei Logs e dei dati processati.

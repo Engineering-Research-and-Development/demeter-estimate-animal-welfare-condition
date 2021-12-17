@@ -32,7 +32,7 @@ The following components are needed for start using this component:
 
 ## Pull the image
 	
-`docker pull demeterengteam/estimate-animal-welfare-condition:candidate`
+`docker pull demeterengteam/estimate-animal-welfare-condition:latest`
 
 ## Run the application
 
@@ -41,7 +41,7 @@ It's possible to run the application using <!--`docker run` or --> `docker-compo
 <!--
 ### Docker run
 
-`docker run -p 9180:8080 demeterengteam/estimate-animal-welfare-condition:candidate`
+`docker run -p 9180:8080 demeterengteam/estimate-animal-welfare-condition:latest`
 
 Set the preferred port to use instead of 9180.
 -->
@@ -57,7 +57,7 @@ version: '3'
 
 services:
     animalwelfare:
-        image: demeterengteam/estimate-animal-welfare-condition:candidate
+        image: demeterengteam/estimate-animal-welfare-condition:latest
         ports:
           - '${HOST_PORT}:8080'
 		environment: 

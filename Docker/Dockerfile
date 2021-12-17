@@ -5,7 +5,7 @@ FROM tomcat:7.0.104
 ARG MODULE_NAME=EstimateAnimalWelfareConditionModule
 ARG DIRECTORY_NAME=AW-WorkDir
 ARG TOMCAT_DIRECTORY=/usr/local/tomcat
-ARG HOST_IP=192.168.1.42
+ARG HOST_IP=192.168.1.43
 ARG TRASLATOR_SERVICE_HOST_PORT=9380
 
 # DECLARING ENVIRONMENT VAR
@@ -46,15 +46,27 @@ RUN mkdir -p ${TOMCAT_DIRECTORY}/${DIRECTORY_NAME}/data \
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y python3.7 python3-pip
 
-RUN pip3 install pandas \
- && pip3 install numpy \
- && pip3 install scipy \
- && pip3 install matplotlib \
- && pip3 install scikit-learn \
- && pip3 install sklearn \
- && pip3 install requests \
- && pip3 install cherrypy \
- && pip3 install mysql-connector
+RUN python3 -m pip install --upgrade pip
+
+RUN python3 -m pip install --upgrade Pillow
+
+RUN pip3 install 'pandas==1.2.1'
+
+RUN pip3 install 'numpy==1.19.5'
+
+RUN pip3 install 'scipy==1.6.0'
+
+RUN pip3 install 'matplotlib==3.3.3'
+
+RUN pip3 install 'scikit-learn==0.24.1'
+
+RUN pip3 install 'sklearn==0.0'
+
+RUN pip3 install 'requests==2.25.1'
+
+RUN pip3 install 'cherrypy==18.6.0'
+
+RUN pip3 install 'mysql-connector==2.2.9'
 
 # JPY INSTALLATION
 

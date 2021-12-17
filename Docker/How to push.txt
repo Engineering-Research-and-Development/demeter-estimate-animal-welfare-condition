@@ -1,0 +1,3 @@
+- Stop the container: docker-compose stop
+- Login on docker hub: docker login --username=demeterproject      password DckrD3m3t3r.
+- Push the image: docker push demeterengteam/estimate-animal-welfare-condition:latest

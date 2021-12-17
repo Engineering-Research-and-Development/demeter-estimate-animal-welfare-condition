@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+    <Appenders>
+        <Console name="LogToConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <RollingFile name="LogToRollingFile" fileName="./logs/AnimalWelfareService.log"
+                    filePattern="./logs/AnimalWelfareService-%d{dd-MM-yyyy}-%i.log.gz">
+			<PatternLayout>
+				<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %p [%C:%L] - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="10 MB"/>
+			</Policies>
+			<DefaultRolloverStrategy>
+    			<!--
+      			* only files in the log folder, no sub folders
+      			* only rolled over log files (name match)
+      			* only files that are 4 days old or older
+    			-->
+    			<Delete basePath="logs/" maxDepth="1">
+      				<IfFileName glob="*.log.gz" />
+      				<IfLastModified age="1d" />
+    			</Delete>
+  			</DefaultRolloverStrategy>
+		</RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- avoid duplicated logs with additivity=false -->
+        <Logger name="it.eng.is3lab.animal_welfare.service" level="debug" additivity="false">
+            <AppenderRef ref="LogToRollingFile"/>
+        </Logger>
+        <Logger name="it.eng.is3lab.animal_welfare.pyplugin" level="debug" additivity="false">
+            <AppenderRef ref="LogToRollingFile"/>
+        </Logger>
+        <Root level="debug">
+            <AppenderRef ref="LogToConsole"/>
+        </Root>
+    </Loggers>
+</Configuration>
