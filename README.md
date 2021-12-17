@@ -34,7 +34,7 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 | [RESTEasy API][7]                                | Java     | 3.12.1.Final     |
 | [Spring Framework][8]                            | Java     | 4.3.3.RELEASE    |
 | [Json][9]                                        |          | 20200518         |
-| [Log4j][10]                                      |          | 2.13.3           |
+| [Log4j][10]                                      |          | 2.16.0           |
 | [Eclipse IDE for Enterprise Java Developers][11] | Java     | 2020-06 (4.16.0) |
 | [PyDev Python IDE for Eclipse][12]               | Python   | 7.6.0            |
 | [Docker Desktop Community][13]                   |          | 2.3.0.4 (46911)  |
@@ -73,7 +73,7 @@ The following components are needed for start using this component:
 
 ### Pull the image
 	
-`docker pull demeterengteam/estimate-animal-welfare-condition:candidate`
+`docker pull demeterengteam/estimate-animal-welfare-condition:latest`
 
 ### Run the application
 
@@ -82,7 +82,7 @@ It's possible to run the application using <!--`docker run` or --> `docker-compo
 <!--
 #### Docker run
 
-`docker run -p 9180:8080 demeterengteam/estimate-animal-welfare-condition:candidate`
+`docker run -p 9180:8080 demeterengteam/estimate-animal-welfare-condition:latest`
 
 Set the preferred port to use instead of 9180.
 -->
@@ -98,7 +98,7 @@ version: '3'
 
 services:
     animalwelfare:
-        image: demeterengteam/estimate-animal-welfare-condition:candidate
+        image: demeterengteam/estimate-animal-welfare-condition:latest
         ports:
           - '${HOST_PORT}:8080'
 		environment: 
