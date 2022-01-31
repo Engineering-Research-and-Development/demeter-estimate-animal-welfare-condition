@@ -65,7 +65,7 @@ The following components are needed for start using this component:
 
 | Components required                | Description   |
 | :--------------------------------  | :------------ |
-| [pilot4.2-traslator:candidate][14]  | AIM traslator |
+| [pilot4.2-traslator:latest][14]  | AIM traslator |
 
 [14]: https://hub.docker.com/r/demeterengteam/pilot4.2-traslator
 
