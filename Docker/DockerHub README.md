@@ -26,7 +26,7 @@ The following components are needed for start using this component:
 
 | Components required                | Description   |
 | :--------------------------------  | :------------ |
-| [pilot4.2-traslator:candidate][2]  | AIM traslator |
+| [pilot4.2-traslator:latest][2]  | AIM traslator |
 
 
 
