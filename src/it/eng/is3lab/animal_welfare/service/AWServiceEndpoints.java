@@ -108,7 +108,8 @@ public class AWServiceEndpoints implements AWService {
     	AWResult result = new AWResult();
     	try {
     		log.debug("Training endpoint reached!");   		
-    		String jsonDataOutput = AWDataManagement.sendToPythonAndGetResult("Training");
+    		//String jsonDataOutput = AWDataManagement.sendToPythonAndGetResult("Training");
+    		String jsonDataOutput = AWDataManagement.manageDataToStoreTemporary("Training");
     		log.debug("Training dataset successfully retrieved!");
     		log.debug("==========================================================");
     		return Response.status(200).entity(jsonDataOutput).build();
@@ -129,7 +130,8 @@ public class AWServiceEndpoints implements AWService {
     	AWResult result = new AWResult();
     	try {
     		log.debug("Prediction endpoint reached!");
-    		String jsonDataOutput = AWDataManagement.sendToPythonAndGetResult("Prediction");
+    		//String jsonDataOutput = AWDataManagement.sendToPythonAndGetResult("Prediction");
+    		String jsonDataOutput = AWDataManagement.manageDataToStoreTemporary("Prediction");
     		log.debug("Prediction dataset successfully retrieved!");
     		log.debug("==========================================================");
     		return Response.status(200).entity(jsonDataOutput).build();

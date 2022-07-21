@@ -157,8 +157,9 @@ class AnimalWelfareRandomForest:
         myGraph = myAIM['@graph']
         cols = ['Index','Date','Pedometer', 'Cow', 'MID', 'Lactations', 'Daily Production', 'Average Daily Production',
                'Daily Fat', 'Daily Proteins', 'Daily Fat/Proteins', 'Conduttivity 1', 'Conduttivity 2', 'Conduttivity 3', 'Activity 1', 
-               'Activity 2', 'Activity 3', 'Total Daily Lying', 'ActualLameness', 'PredictedLameness',
-               'ActualMastitis', 'PredictedMastitis', 'ActualKetosis', 'PredictedKetosis']
+               'Activity 2', 'Activity 3', 'Average Rumination Time 1', 'Average Rumination Time 2', 'Average Rumination Time 3', 
+               'Average Ingestion Time 1', 'Average Ingestion Time 2', 'Average Ingestion Time 3', 'Total Daily Lying', 'ActualLameness', 'PredictedLameness',
+               'ActualMastitis', 'PredictedMastitis', 'ActualKetosis', 'PredictedKetosis', 'ActualHeatStress', 'PredictedHeatStress']
         rows = []
         
         # Start the count at 1, because the @graph[0] element refer to metrics data storage.
@@ -167,71 +168,91 @@ class AnimalWelfareRandomForest:
             cow = myGraph[count]['livestockNumber']
             index = myGraph[count+1]['indentifier']
             date = myGraph[count+2]['resultTime']
-            pedometer = myGraph[count+5]['hasResult'][0]['numericValue']
-            mid = myGraph[count+6]['hasResult'][0]['numericValue']
-            lactations = myGraph[count+7]['hasResult'][0]['numericValue']
-            dailyprod = myGraph[count+8]['hasResult'][0]['numericValue']
-            averagedp = myGraph[count+9]['hasResult'][0]['numericValue']
-            dailyfat = myGraph[count+10]['hasResult'][0]['numericValue']
-            dailyproteins = myGraph[count+11]['hasResult'][0]['numericValue']
-            dailyfatproteins = myGraph[count+12]['hasResult'][0]['numericValue']
-            tdl = myGraph[count+13]['hasResult'][0]['numericValue']
+            pedometer = myGraph[count+7]['hasResult'][0]['numericValue']
+            mid = myGraph[count+8]['hasResult'][0]['numericValue']
+            lactations = myGraph[count+9]['hasResult'][0]['numericValue']
+            dailyprod = myGraph[count+10]['hasResult'][0]['numericValue']
+            averagedp = myGraph[count+11]['hasResult'][0]['numericValue']
+            dailyfat = myGraph[count+12]['hasResult'][0]['numericValue']
+            dailyproteins = myGraph[count+13]['hasResult'][0]['numericValue']
+            dailyfatproteins = myGraph[count+14]['hasResult'][0]['numericValue']
+            tdl = myGraph[count+15]['hasResult'][0]['numericValue']
             
-            if '#healthStatus-Healthy' in myGraph[count+14]['hasResult']:
+            if '#healthStatus-Healthy' in myGraph[count+16]['hasResult']:
                 actuallameness = 'Healthy'
-            elif '#healthStatus-Sick' in myGraph[count+14]['hasResult']:
+            elif '#healthStatus-Sick' in myGraph[count+16]['hasResult']:
                 actuallameness = 'Sick'
             else:
                 actuallameness = ''
                 
-            if '#healthStatus-Healthy' in myGraph[count+15]['hasResult']:
+            if '#healthStatus-Healthy' in myGraph[count+17]['hasResult']:
                 predictedlameness = 'Healthy'
-            elif '#healthStatus-Sick' in myGraph[count+15]['hasResult']:
+            elif '#healthStatus-Sick' in myGraph[count+17]['hasResult']:
                 predictedlameness = 'Sick'
             else:
                 predictedlameness = ''
             
-            if '#healthStatus-Healthy' in myGraph[count+16]['hasResult']:
+            if '#healthStatus-Healthy' in myGraph[count+18]['hasResult']:
                 actualketosis = 'Healthy'
-            elif '#healthStatus-Sick' in myGraph[count+16]['hasResult']:
+            elif '#healthStatus-Sick' in myGraph[count+18]['hasResult']:
                 actualketosis = 'Sick'
             else:
                 actualketosis = ''
                 
-            if '#healthStatus-Healthy' in myGraph[count+17]['hasResult']:
+            if '#healthStatus-Healthy' in myGraph[count+19]['hasResult']:
                 predictedketosis = 'Healthy'
-            elif '#healthStatus-Sick' in myGraph[count+17]['hasResult']:
+            elif '#healthStatus-Sick' in myGraph[count+19]['hasResult']:
                 predictedketosis = 'Sick'
             else:
                 predictedketosis = ''
             
-            if '#healthStatus-Healthy' in myGraph[count+18]['hasResult']:
+            if '#healthStatus-Healthy' in myGraph[count+20]['hasResult']:
                 actualmastitis = 'Healthy'
-            elif '#healthStatus-Sick' in myGraph[count+18]['hasResult']:
+            elif '#healthStatus-Sick' in myGraph[count+20]['hasResult']:
                 actualmastitis = 'Sick'
             else:
                 actualmastitis = ''
             
-            if '#healthStatus-Healthy' in myGraph[count+19]['hasResult']:
+            if '#healthStatus-Healthy' in myGraph[count+21]['hasResult']:
                 predictedmastitis = 'Healthy'
-            elif '#healthStatus-Sick' in myGraph[count+19]['hasResult']:
+            elif '#healthStatus-Sick' in myGraph[count+21]['hasResult']:
                 predictedmastitis = 'Sick'
             else:
                 predictedmastitis = ''
+                
+            if '#healthStatus-Healthy' in myGraph[count+22]['hasResult']:
+                actualHeatStress = 'Healthy'
+            elif '#healthStatus-Stressed' in myGraph[count+22]['hasResult']:
+                actualHeatStress = 'Stressed'
+            else:
+                actualHeatStress = ''
             
-            cond1 = myGraph[count+20]['hasResult'][0]['numericValue']
-            cond2 = myGraph[count+21]['hasResult'][0]['numericValue']
-            cond3 = myGraph[count+22]['hasResult'][0]['numericValue']
-            act1 = myGraph[count+23]['hasResult'][0]['numericValue']
-            act2 = myGraph[count+24]['hasResult'][0]['numericValue']
-            act3 = myGraph[count+25]['hasResult'][0]['numericValue']
+            if '#healthStatus-Healthy' in myGraph[count+23]['hasResult']:
+                predictedHeatStress = 'Healthy'
+            elif '#healthStatus-Stressed' in myGraph[count+23]['hasResult']:
+                predictedHeatStress = 'Stressed'
+            else:
+                predictedHeatStress = ''
+            
+            cond1 = myGraph[count+24]['hasResult'][0]['numericValue']
+            cond2 = myGraph[count+25]['hasResult'][0]['numericValue']
+            cond3 = myGraph[count+26]['hasResult'][0]['numericValue']
+            act1 = myGraph[count+27]['hasResult'][0]['numericValue']
+            act2 = myGraph[count+28]['hasResult'][0]['numericValue']
+            act3 = myGraph[count+29]['hasResult'][0]['numericValue']
+            rum1 = myGraph[count+30]['hasResult'][0]['numericValue']
+            rum2 = myGraph[count+31]['hasResult'][0]['numericValue']
+            rum3 = myGraph[count+32]['hasResult'][0]['numericValue']
+            ing1 = myGraph[count+33]['hasResult'][0]['numericValue']
+            ing2 = myGraph[count+34]['hasResult'][0]['numericValue']
+            ing3 = myGraph[count+35]['hasResult'][0]['numericValue']
         
             rows.append([index, date, pedometer, cow, mid, lactations, dailyprod, averagedp, dailyfat, dailyproteins, dailyfatproteins,
-                         cond1, cond2, cond3, act1, act2, act3, tdl, actuallameness, predictedlameness,
-                        actualmastitis, predictedmastitis, actualketosis, predictedketosis])
+                         cond1, cond2, cond3, act1, act2, act3, rum1, rum2, rum3, ing1, ing2, ing3, tdl, actuallameness, predictedlameness,
+                        actualmastitis, predictedmastitis, actualketosis, predictedketosis, actualHeatStress, predictedHeatStress])
             
             # Each animal takes 26 elements to store each data that will be used by Random Forest
-            count += 26 
+            count += 36 
         
         dataframe = pd.DataFrame(rows, columns=cols)
         dataframe = dataframe.set_index('Index')
@@ -270,6 +291,7 @@ class AnimalWelfareRandomForest:
                 LamenessModelName = PrefixModel + 'LamenessModel'
                 KetosisModelName = PrefixModel + 'KetosisModel'
                 MastitisModelName = PrefixModel + 'MastitisModel'
+                HeatStressModelName = PrefixModel + 'HeatStressModel'
 
                 self.myLog.writeMessage('Preparing to execute Random Forest training phase of Estimate Animal Welfare Condition ...',"INFO",functionName)
                 # Check if directory exists, or create it
@@ -282,6 +304,16 @@ class AnimalWelfareRandomForest:
                     # Directory already exists
                     self.myLog.writeMessage('Directory already exists: ' + os.path.realpath(ModelFolderPath), "DEBUG",functionName)
                     pass
+                
+                try:
+                    self.myLog.writeMessage('Checking models directory ...',"DEBUG",functionName)
+                    os.makedirs(DataFolderPath)
+                    self.myLog.writeMessage('Warning: Directory not found! ',"WARN",functionName)
+                    self.myLog.writeMessage('Created directory: ' + os.path.realpath(DataFolderPath), "DEBUG",functionName)
+                except FileExistsError:
+                    # Directory already exists
+                    self.myLog.writeMessage('Directory already exists: ' + os.path.realpath(DataFolderPath), "DEBUG",functionName)
+                    pass
 
                 # Dataset preparation
                 self.myLog.writeMessage('Loading dataset ...',"DEBUG",functionName)
@@ -290,7 +322,8 @@ class AnimalWelfareRandomForest:
                 dataframe= self.getDataFromTraslator(url)
                 
                 cols = ['Total Daily Lying', 'ActualLameness', 'Daily Fat', 'Daily Proteins', 'Daily Fat/Proteins', 'ActualKetosis',
-                        'Conduttivity 1', 'Conduttivity 2', 'Conduttivity 3', 'ActualMastitis']
+                        'Conduttivity 1', 'Conduttivity 2', 'Conduttivity 3', 'ActualMastitis', 'Average Rumination Time 1', 'Average Rumination Time 2', 
+                        'Average Rumination Time 3', 'Average Ingestion Time 1', 'Average Ingestion Time 2', 'Average Ingestion Time 3', 'ActualHeatStress']
                 dataset = dataframe[cols]
                 self.myLog.writeMessage('Dataset successfully loaded!',"DEBUG",functionName)
 
@@ -310,6 +343,12 @@ class AnimalWelfareRandomForest:
                 leMastitis.fit(["Healthy", "Sick"])  # Healthy = 0 , Sick = 1
                 leMastitis.transform(dataset["ActualMastitis"])
                 dataset['ActualMastitis'] = leMastitis.transform(dataset['ActualMastitis']).astype(int)
+                
+                leHeatStress = LabelEncoder()
+                leHeatStress.fit(["Healthy", "Stressed"])  # Healthy = 0 , Stressed = 1
+                leHeatStress.transform(dataset["ActualHeatStress"])
+                dataset['ActualHeatStress'] = leHeatStress.transform(dataset['ActualHeatStress']).astype(int)
+                
                 self.myLog.writeMessage('Encoding labels successfully completed!',"DEBUG",functionName)
 
                 # Random forest classification preparation
@@ -328,6 +367,10 @@ class AnimalWelfareRandomForest:
                 Mastitis_X = dataset.iloc[:, 6:9].values
                 Mastitis_y = dataset.iloc[:, 9].values
                 Mastitis_i = dataset.index.values
+                
+                HeatStress_X = dataset.iloc[:, 10:16].values
+                HeatStress_y = dataset.iloc[:, 16].values
+                HeatStress_i = dataset.index.values
                 self.myLog.writeMessage('Values definintion for classification successfully completed!',"DEBUG",functionName)
 
                 # Split data into training and test, and keep the index for each of them
@@ -340,6 +383,9 @@ class AnimalWelfareRandomForest:
 
                 Mastitis_X_train, Mastitis_X_test, Mastitis_y_train, Mastitis_y_test, Mastitis_i_train, Mastitis_i_test = train_test_split(
                   Mastitis_X, Mastitis_y, Mastitis_i, test_size=0.20, random_state=rs)
+                
+                HeatStress_X_train, HeatStress_X_test, HeatStress_y_train, HeatStress_y_test, HeatStress_i_train, HeatStress_i_test = train_test_split(
+                  HeatStress_X, HeatStress_y, HeatStress_i, test_size=0.20, random_state=rs)
                 self.myLog.writeMessage('Training and test data definition completed!',"DEBUG",functionName)               
 
                 # Training phase and testing
@@ -355,6 +401,10 @@ class AnimalWelfareRandomForest:
                 MastitisClassifier = RandomForestClassifier(n_estimators=estimators, random_state=rs)
                 MastitisClassifier.fit(Mastitis_X_train, Mastitis_y_train)
                 Mastitis_y_pred = MastitisClassifier.predict(Mastitis_X_test)
+                
+                HeatStressClassifier = RandomForestClassifier(n_estimators=estimators, random_state=rs)
+                HeatStressClassifier.fit(HeatStress_X_train, HeatStress_y_train)
+                HeatStress_y_pred = HeatStressClassifier.predict(HeatStress_X_test)
                 self.myLog.writeMessage('Training and testing completed!',"DEBUG",functionName)
 
                 # Saving models
@@ -362,10 +412,12 @@ class AnimalWelfareRandomForest:
                 joblib.dump(LamenessClassifier, ModelFolderPath + '/' + LamenessModelName + '.pkl')
                 joblib.dump(KetosisClassifier, ModelFolderPath + '/' + KetosisModelName + '.pkl')
                 joblib.dump(MastitisClassifier, ModelFolderPath + '/' + MastitisModelName + '.pkl')
+                joblib.dump(HeatStressClassifier, ModelFolderPath + '/' + HeatStressModelName + '.pkl')
 
                 self.myLog.writeMessage('Model saved : ' + os.path.realpath(ModelFolderPath) + '/' + LamenessModelName + '.pkl', "DEBUG",functionName)
                 self.myLog.writeMessage('Model saved : ' + os.path.realpath(ModelFolderPath) + '/' + KetosisModelName + '.pkl', "DEBUG",functionName)
                 self.myLog.writeMessage('Model saved : ' + os.path.realpath(ModelFolderPath) + '/' + MastitisModelName + '.pkl', "DEBUG",functionName)
+                self.myLog.writeMessage('Model saved : ' + os.path.realpath(ModelFolderPath) + '/' + HeatStressModelName + '.pkl', "DEBUG",functionName)
                 self.myLog.writeMessage('Models successfully saved!',"DEBUG",functionName)
 
                 # Metrics
@@ -375,6 +427,7 @@ class AnimalWelfareRandomForest:
                 LamenessAccuracy = accuracy_score(Lameness_y_test, Lameness_y_pred) * 100
                 KetosisAccuracy = accuracy_score(Ketosis_y_test, Ketosis_y_pred) * 100
                 MastitisAccuracy = accuracy_score(Mastitis_y_test, Mastitis_y_pred) * 100
+                HeatStressAccuracy = accuracy_score(HeatStress_y_test, HeatStress_y_pred) * 100
                 self.myLog.writeMessage('Accuracy score calculated!',"DEBUG",functionName)
 
                 # Precision score
@@ -382,6 +435,7 @@ class AnimalWelfareRandomForest:
                 LamenessPrecision = round(precision_score(Lameness_y_test, Lameness_y_pred, average='macro') * 100,1)
                 KetosisPrecision = round(precision_score(Ketosis_y_test, Ketosis_y_pred, average='micro') * 100,1)
                 MastitisPrecision = round(precision_score(Mastitis_y_test, Mastitis_y_pred, average='micro') * 100,1)
+                HeatStressPrecision = round(precision_score(HeatStress_y_test, HeatStress_y_pred, average='micro') * 100,1)
                 self.myLog.writeMessage('Precision score calculated!',"DEBUG",functionName)
                 
                 # True positive, false positive, true negative, false negative, true positive rate, false positive rate
@@ -389,10 +443,12 @@ class AnimalWelfareRandomForest:
                 Lameness_TP, Lameness_FP, Lameness_TN, Lameness_FN, Lameness_FPR, Lameness_TPR = self.measure(Lameness_y_test, Lameness_y_pred)
                 Ketosis_TP, Ketosis_FP, Ketosis_TN, Ketosis_FN, Ketosis_FPR, Ketosis_TPR = self.measure(Ketosis_y_test, Ketosis_y_pred)
                 Mastitis_TP, Mastitis_FP, Mastitis_TN, Mastitis_FN, Mastitis_FPR, Mastitis_TPR = self.measure(Mastitis_y_test, Mastitis_y_pred)
+                HeatStress_TP, HeatStress_FP, HeatStress_TN, HeatStress_FN, HeatStress_FPR, HeatStress_TPR = self.measure(HeatStress_y_test, HeatStress_y_pred)
 
                 metricsDict = {'lamenessTruePositiveRate': [Lameness_TPR], 'lamenessFalsePositiveRate': [Lameness_FPR], 'lamenessPrecision': [LamenessPrecision], 'lamenessAccuracy': [LamenessAccuracy],
                                'mastitisTruePositiveRate': [Mastitis_TPR], 'mastitisFalsePositiveRate': [Mastitis_FPR], 'mastitisPrecision': [MastitisPrecision], 'mastitisAccuracy': [MastitisAccuracy],
-                               'ketosisTruePositiveRate': [Ketosis_TPR], 'ketosisFalsePositiveRate': [Ketosis_FPR], 'ketosisPrecision': [KetosisPrecision], 'ketosisAccuracy': [KetosisAccuracy]}
+                               'ketosisTruePositiveRate': [Ketosis_TPR], 'ketosisFalsePositiveRate': [Ketosis_FPR], 'ketosisPrecision': [KetosisPrecision], 'ketosisAccuracy': [KetosisAccuracy],
+                               'heatStressTruePositiveRate': [HeatStress_TPR], 'heatStressFalsePositiveRate': [HeatStress_FPR], 'heatStressPrecision': [HeatStressPrecision], 'heatStressAccuracy': [HeatStressAccuracy]}
                 self.myLog.writeMessage('True positive rate and false positive rate calculated!',"DEBUG",functionName)
                 dsMetrics = pd.DataFrame(metricsDict)
                 self.myLog.writeMessage('Metrics calculations completed!',"DEBUG",functionName)
@@ -418,14 +474,23 @@ class AnimalWelfareRandomForest:
                 dfPredictedMastitis = pd.DataFrame(leMastitis.inverse_transform(Mastitis_y_pred))
                 dfPredictedMastitis = dfPredictedMastitis.set_index(indices)
                 dfPredictedMastitis.columns = ['PredictedMastitis']
+                dfActualHeatStress = pd.DataFrame(leHeatStress.inverse_transform(HeatStress_y_test))
+                dfActualHeatStress = dfActualHeatStress.set_index(indices)
+                dfActualHeatStress.columns = ['ActualHeatStress']
+                dfPredictedHeatStress = pd.DataFrame(leHeatStress.inverse_transform(HeatStress_y_pred))
+                dfPredictedHeatStress = dfPredictedHeatStress.set_index(indices)
+                dfPredictedHeatStress.columns = ['PredictedHeatStress']
 
                 cols = ['Date', 'Pedometer', 'Cow', 'MID', 'Lactations', 'Daily Production', 'Average Daily Production',
                         'Daily Fat', 'Daily Proteins', 'Daily Fat/Proteins', 'Conduttivity 1', 'Conduttivity 2', 'Conduttivity 3',
-                        'Activity 1', 'Activity 2', 'Activity 3', 'Total Daily Lying']
+                        'Activity 1', 'Activity 2', 'Activity 3', 'Total Daily Lying',
+                        'Average Rumination Time 1', 'Average Rumination Time 2', 'Average Rumination Time 3', 
+                        'Average Ingestion Time 1', 'Average Ingestion Time 2', 'Average Ingestion Time 3']
 
                 dsPredictions = dataframe[cols].loc[indices].join([dfActualLameness, dfPredictedLameness, 
                                                           dfActualKetosis, dfPredictedKetosis, 
-                                                          dfActualMastitis, dfPredictedMastitis])
+                                                          dfActualMastitis, dfPredictedMastitis, 
+                                                          dfActualHeatStress, dfPredictedHeatStress])
                 dsPredictions.sort_index(inplace=True)
                 #dsPredictions['Date'] = pd.to_datetime(dsPredictions['Date'], format='%Y-%m-%d').dt.strftime('%d/%m/%Y')
                 dsPredictions = dsPredictions.reset_index()
@@ -505,6 +570,7 @@ class AnimalWelfareRandomForest:
                 LamenessModelName = PrefixModel + 'LamenessModel'
                 KetosisModelName = PrefixModel + 'KetosisModel'
                 MastitisModelName = PrefixModel + 'MastitisModel'
+                HeatStressModelName = PrefixModel + 'HeatStressModel'
                 DataFolderPath = self.config.get('PyRandomForest', 'animalwelfare.randomForest.commonSettings.datafilePath')
                 csvFileName = self.config.get('PyRandomForest', 'animalwelfare.randomForest.commonSettings.csvFileName')
 
@@ -531,7 +597,8 @@ class AnimalWelfareRandomForest:
                 self.myLog.writeMessage('Checking saved models files ...',"DEBUG",functionName)
                 if (os.path.exists(ModelFolderPath + '/' + LamenessModelName + '.pkl') and
                     os.path.exists(ModelFolderPath + '/' + KetosisModelName + '.pkl') and
-                    os.path.exists(ModelFolderPath + '/' + MastitisModelName + '.pkl')):
+                    os.path.exists(ModelFolderPath + '/' + MastitisModelName + '.pkl') and
+                    os.path.exists(ModelFolderPath + '/' + HeatStressModelName + '.pkl')):
                     self.myLog.writeMessage('Models files found!',"DEBUG",functionName)
                     pass
                 else :
@@ -558,10 +625,13 @@ class AnimalWelfareRandomForest:
                     LamenessCols = ['Total Daily Lying']
                     KetosisCols = ['Daily Fat', 'Daily Proteins', 'Daily Fat/Proteins']
                     MastitisCols = ['Conduttivity 1', 'Conduttivity 2', 'Conduttivity 3']
+                    HeatStressCols = ['Average Rumination Time 1', 'Average Rumination Time 2', 'Average Rumination Time 3', 
+                                      'Average Ingestion Time 1', 'Average Ingestion Time 2', 'Average Ingestion Time 3']
 
                     LamenessDS = dataframe[LamenessCols]
                     KetosisDS = dataframe[KetosisCols]
                     MastitisDS = dataframe[MastitisCols]
+                    HeatStressDS = dataframe[HeatStressCols]
                     self.myLog.writeMessage('Dataset successfully loaded!',"DEBUG",functionName)
 
                     # Loading random forest saved models
@@ -569,6 +639,7 @@ class AnimalWelfareRandomForest:
                     LamenessClassifier = joblib.load(ModelFolderPath + '/' + LamenessModelName + '.pkl')
                     KetosisClassifier = joblib.load(ModelFolderPath + '/' + KetosisModelName + '.pkl')
                     MastitisClassifier = joblib.load(ModelFolderPath + '/' + MastitisModelName + '.pkl')
+                    HeatStressClassifier = joblib.load(ModelFolderPath + '/' + HeatStressModelName + '.pkl')
                     self.myLog.writeMessage('Models successfully loaded!',"DEBUG",functionName)
 
                     # Execute predictions
@@ -576,15 +647,19 @@ class AnimalWelfareRandomForest:
                     LamenessPred = LamenessClassifier.predict(LamenessDS)
                     KetosisPred = KetosisClassifier.predict(KetosisDS)
                     MastitisPred = MastitisClassifier.predict(MastitisDS)
+                    HeatStressPred = HeatStressClassifier.predict(HeatStressDS)
                     self.myLog.writeMessage('Predictions successfully completed!',"DEBUG",functionName)
 
                     # Predictions output preparation
                     self.myLog.writeMessage('Output preparation ...',"DEBUG",functionName)
                     le = LabelEncoder()
+                    leHeatStress = LabelEncoder()
                     le.fit(['Healthy','Sick']) # Healthy = 0 , Sick = 1
+                    leHeatStress.fit(['Healthy','Stressed']) # Healthy = 0 , Stressed = 1
                     dataframe['PredictedLameness'] = le.inverse_transform(LamenessPred)
                     dataframe['PredictedKetosis'] = le.inverse_transform(KetosisPred)
                     dataframe['PredictedMastitis'] = le.inverse_transform(MastitisPred)
+                    dataframe['PredictedHeatStress'] = leHeatStress.inverse_transform(HeatStressPred)
                     dataframe = dataframe.reset_index()
                     self.myLog.writeMessage('Output preparation completed!',"DEBUG",functionName)
                     
