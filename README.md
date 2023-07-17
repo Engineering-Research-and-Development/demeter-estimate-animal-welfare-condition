@@ -9,6 +9,7 @@ The model learns any relationships between the data and the values we want to pr
 The decision tree forms a structure, calculating the best questions to ask to make the most accurate estimates possible.
 
 ## Table of contents
+* [**Architecture**](#architecture)
 * [**Technologies**](#technologies)
 * [**Requirements**](#requirements)
 * [**Setup**](#setup)
@@ -20,6 +21,9 @@ The decision tree forms a structure, calculating the best questions to ask to ma
 * [**Developers**](#developers)
 * [**Status**](#status)
 * [**License**](#license)
+
+## Architecture
+![AW Architecture](/images/architecture.png)
 
 ## Technologies
 
