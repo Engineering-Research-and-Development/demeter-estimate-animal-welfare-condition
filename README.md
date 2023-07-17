@@ -175,7 +175,7 @@ For instance:
 This endpoint will first change the values of random state and estimators parameters and then execute the training.
 -->
 ## How to use
-**TO DO**
+Please refer to the [pilot4.2-traslator][14] "**How To Use**" documentation.
 
 ## Important Notes
 
@@ -197,7 +197,7 @@ There are two different error codes that are useful to identify where the error 
 * [Luigi di Corrado](https://github.com/luidicorra) 
 
 ## Status
-Project is: _in progress_
+Project is: _Completed_
 
 ## License
 <!--- If you're not sure which open license to use see https://choosealicense.com/--->
